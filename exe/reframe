@@ -1,8 +1,38 @@
 #!/usr/bin/env ruby
 
-require "textbringer"
+# `bundle exec exe/reframe' in vendored mode
+BUNDLE_MSG="try `bundle exec exe/reframe' if/when in dev mode"
+OW=lambda{"#{$!}"}
+def ow!() "#{$!}"; end
+if ENV.key?('REFRAME_ENV')
+	# http://bundler.io/rubygems.html
+	begin
+		Bundler.require(ENV['REFRAME_ENV'])
+	rescue NameError
+		raise unless ow! =~ /uninitialized constant Bundler/
+		puts BUNDLE_MSG
+		exit
+	end
+	require_relative "../lib/reframe"
+else
+	begin
+		require "reframe"
+	rescue LoadError
+		raise unless ow! =~ /reframe/
+		puts BUNDLE_MSG
+		exit
+	end
+end
+
+# C-x C-c
 
 include Textbringer
+
+EXEC=File.basename($0).freeze
+puts "#{EXEC} #{ARGV.join(' ')}"
+puts "ruby #{ RUBY_VERSION }p#{ RUBY_PATCHLEVEL }"
+puts "#{EXEC} #{VERSION}"
+
 include Commands
 
 def load_user_config
