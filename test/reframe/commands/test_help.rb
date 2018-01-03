@@ -33,7 +33,7 @@ class TestHelp < Textbringer::TestCase
     jump_to_link_command
     assert_match(/^enlarge_window\(n\)/, Buffer.current.to_s)
     jump_to_link_command
-    assert_match(%r'lib/textbringer/commands/windows\.rb\z',
+    assert_match(%r'lib/reframe/commands/windows\.rb\z',
                  Buffer.current.file_name)
     switch_to_buffer("*Help*")
     re_search_forward(/shrink_window/)

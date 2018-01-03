@@ -7,17 +7,17 @@ class TestMisc < Textbringer::TestCase
                  Window.echo_area.message)
   end
 
-  def test_exit_textbringer
+  def test_exit_reframe
     mkcdtmpdir do
       find_file("foo.txt")
       insert("foo")
       push_keys("no\n")
       assert_nothing_raised do
-        exit_textbringer
+        exit_reframe
       end
       push_keys("yes\n")
       assert_raise(SystemExit) do
-        exit_textbringer
+        exit_reframe
       end
     end
   end

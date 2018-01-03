@@ -36,7 +36,7 @@ puts "#{EXEC} #{VERSION}"
 include Commands
 
 def load_user_config
-  config_file = File.expand_path("~/.textbringer.rb")
+  config_file = File.expand_path("~/.reframe.rb")
   begin
     load(config_file)
   rescue LoadError

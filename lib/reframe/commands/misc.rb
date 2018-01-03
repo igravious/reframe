@@ -7,14 +7,14 @@ module Textbringer
               "(ruby #{RUBY_VERSION} [#{RUBY_PLATFORM}])")
     end
 
-    define_command(:exit_textbringer) do |status = 0|
+    define_command(:exit_reframe) do |status = 0|
       if Buffer.any? { |buffer| /\A\*/ !~ buffer.name && buffer.modified? }
         return unless yes_or_no?("Unsaved buffers exist; exit anyway?")
       end
       exit(status)
     end
 
-    define_command(:suspend_textbringer) do
+    define_command(:suspend_reframe) do
       Curses.close_screen
       Process.kill(:STOP, 0)
     end

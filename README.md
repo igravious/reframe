@@ -5,8 +5,24 @@
 [![Build Status](https://travis-ci.org/igravious/reframe.svg?branch=plato)](https://travis-ci.org/igravious/reframe)
 [![codecov](https://codecov.io/gh/igravious/reframe/branch/plato/graph/badge.svg)](https://codecov.io/gh/igravious/reframe)
 
-Textbringer is a member of a demon race that takes on the form of an Emacs-like
-text editor.
+ReFrame answers the question, “why?”, with a petulant “why not?”.
+
+ReFrame is a console (terminal) based *semantic document* editor. Because you're
+just dying to know, a semantic document is one that contains both unstructured
+and structured elements. Specifically in this case the unstructured elements
+are one of:
+- semantic markdown
+- figures
+- citations
+
+
+
+ReFrame is _not_ a hypermedia application. Hypermedia is predicated on hyperlinks
+which do not encode how the link links somewhere. It's just
+```a -> b```
+Semantic links say that ```a``` is linked to ```b``` in the manner of ```c```
+This might seem like a nebulous and tenuous difference and its implications
+are difficult to grasp initially.
 
 ## Screenshot
 
@@ -20,25 +36,25 @@ text editor.
 
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved buffers will
-be dumped in ~/.textbringer/buffer_dump on crash.
+ReFrame is beta software, and you may lose your text.  Unsaved buffers will
+be dumped in ~/.reframe/buffer_dump on crash.
 
 APIs are undocumented and unstable.  There is no compatibility even in the same
 minor versions.
 
 ## Installation
 
-    $ gem install textbringer
+    $ gem install reframe
 
 You need ncursesw to use multibyte characters.
-Install ncursesw before installing curses.gem, on which textbringer depends.
+Install ncursesw before installing curses.gem, on which reframe depends.
 
     $ sudo apt-get install libncursesw5-dev
     $ gem install curses
 
 ## Usage
 
-    $ textbringer
+    $ reframe
 
 You can quit the editor by `Ctrl-x Ctrl-c`.
 
@@ -67,7 +83,7 @@ Add the following lines to ~/.mlterm/main.
 
 ### East asian ambiguous width
 
-Add the following line to ~/.textbringer.rb to treat
+Add the following line to ~/.reframe.rb to treat
 [ambiguous characters](http://unicode.org/reports/tr11/#Ambiguous)
 as fullwidth.
 

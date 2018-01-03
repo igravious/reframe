@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "textbringer"
+require "reframe"
 require "irb"
 
-include Textbringer
+include ReFrame
 
 IRB.start

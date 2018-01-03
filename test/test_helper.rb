@@ -3,10 +3,10 @@ require "test/unit"
 require "tmpdir"
 require "curses"
 
-SimpleCov.profiles.define "textbringer" do
+SimpleCov.profiles.define "reframe" do
   add_filter "/test/"
 end
-SimpleCov.start("textbringer")
+SimpleCov.start("reframe")
 
 if ENV["UPLOAD_TO_CODECOV"]
   require "codecov"
@@ -62,7 +62,7 @@ module Curses
   end
 end
 
-require "textbringer"
+require "reframe"
 
 module Curses
   @fake_lines = 24

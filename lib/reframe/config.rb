@@ -8,7 +8,7 @@ module Textbringer
     tab_width: 8,
     indent_tabs_mode: false,
     case_fold_search: true,
-    buffer_dump_dir: File.expand_path("~/.textbringer/buffer_dump"),
+    buffer_dump_dir: File.expand_path("~/.reframe/buffer_dump"),
     mark_ring_max: 16,
     global_mark_ring_max: 16,
     window_min_height: 4,

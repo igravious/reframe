@@ -5,7 +5,7 @@ class TestBuffers < Textbringer::TestCase
     buffer.insert(<<EOF)
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.textbringer/buffer_dump on crash.
+Textbringer is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.reframe/buffer_dump on crash.
 APIs are undocumented and unstable.  There is no compatibility even in the same minor versions.
 
 ## Installation
@@ -19,7 +19,7 @@ EOF
 ## WARNING
 
 Textbringer is beta software, and you may lose your text.  Unsaved
-buffers will be dumped in ~/.textbringer/buffer_dump on crash.
+buffers will be dumped in ~/.reframe/buffer_dump on crash.
 APIs are undocumented and unstable.  There is no compatibility even in the same minor versions.
 
 ## Installation
@@ -112,7 +112,7 @@ EOF
     buffer.insert(<<EOF)
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.textbringer/buffer_dump on crash.
+Textbringer is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.reframe/buffer_dump on crash.
 APIs are undocumented and unstable.  There is no compatibility even in the same minor versions.
 
 ## Installation
@@ -124,7 +124,7 @@ EOF
 ## WARNING
 
 Textbringer is beta software, and you may lose your text.  Unsaved
-buffers will be dumped in ~/.textbringer/buffer_dump on crash. APIs
+buffers will be dumped in ~/.reframe/buffer_dump on crash. APIs
 are undocumented and unstable.  There is no compatibility even in the
 same minor versions.
 
