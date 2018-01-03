@@ -2,7 +2,7 @@
 
 require "ripper-tags"
 
-module Textbringer
+module ReFrame
   module TagParser
     def on_method_add_arg(call, args)
       call_name = call&.slice(0)
@@ -16,7 +16,7 @@ module Textbringer
   end
 end
 
-RipperTags::Parser.prepend(Textbringer::TagParser)
+RipperTags::Parser.prepend(ReFrame::TagParser)
 
 begin
   RipperTags.process_args(ARGV)

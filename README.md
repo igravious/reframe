@@ -1,10 +1,9 @@
-# Textbringer
+# ![ReFrame](ReFrame_Text-in-Context.png)
 
-[![Gem Version](https://badge.fury.io/rb/textbringer.svg)](https://badge.fury.io/rb/textbringer)
-[![Dependency Status](https://gemnasium.com/shugo/textbringer.svg)](https://gemnasium.com/shugo/textbringer)
-[![Build Status](https://travis-ci.org/shugo/textbringer.svg?branch=master)](https://travis-ci.org/shugo/textbringer)
-[![Build status](https://ci.appveyor.com/api/projects/status/n20vtpfgcgii5jtc?svg=true)](https://ci.appveyor.com/project/shugo31737/textbringer)
-[![codecov](https://codecov.io/gh/shugo/textbringer/branch/master/graph/badge.svg)](https://codecov.io/gh/shugo/textbringer)
+[![Gem Version](https://badge.fury.io/rb/reframe.svg)](https://badge.fury.io/rb/reframe)
+[![Dependency Status](https://gemnasium.com/igravious/reframe.svg)](https://gemnasium.com/igravious/reframe)
+[![Build Status](https://travis-ci.org/igravious/reframe.svg?branch=plato)](https://travis-ci.org/igravious/reframe)
+[![codecov](https://codecov.io/gh/igravious/reframe/branch/plato/graph/badge.svg)](https://codecov.io/gh/igravious/reframe)
 
 Textbringer is a member of a demon race that takes on the form of an Emacs-like
 text editor.
@@ -110,7 +109,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/shugo/textbringer.
+Bug reports and pull requests are welcome on GitHub at https://github.com/igravious/reframe.
 
 
 ## License
