@@ -63,7 +63,7 @@ module Textbringer
     end
 
     define_command(:shrink_window_if_larger_than_buffer, doc: <<~EOD) do
-        Shrink the current window if it's larger than the buffer.
+        Shrink the current window if it is larger than the buffer.
       EOD
       Window.current.shrink_if_larger_than_buffer
     end
