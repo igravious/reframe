@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestBuffers < Textbringer::TestCase
+class TestBuffers < ReFrame::TestCase
   def test_forward_char
     insert("hello world")
     beginning_of_buffer

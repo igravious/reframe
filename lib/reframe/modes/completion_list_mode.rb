@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   class CompletionListMode < Mode
     define_generic_command :choose_completion
 

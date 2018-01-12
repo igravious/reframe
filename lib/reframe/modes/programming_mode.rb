@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   class ProgrammingMode < FundamentalMode
     # abstract mode
     undefine_command(:programming_mode)

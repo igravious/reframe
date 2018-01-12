@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestWindow < Textbringer::TestCase
+class TestWindow < ReFrame::TestCase
   setup do
     @window = Window.current
     @lines = Window.lines - 1

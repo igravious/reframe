@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestDabbrev < Textbringer::TestCase
+class TestDabbrev < ReFrame::TestCase
   using DabbrevExtension
 
   def test_dabbrev_expand

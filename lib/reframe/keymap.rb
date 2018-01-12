@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   class Keymap
     include Enumerable
 
@@ -88,7 +88,7 @@ module Textbringer
     end
   end
 
-  GLOBAL_MAP = Keymap.new
+  GLOBAL_MAP = Keymap.new # personalities
   GLOBAL_MAP.define_key(:resize, :resize_window)
   GLOBAL_MAP.define_key(:right, :forward_char)
   GLOBAL_MAP.define_key(?\C-f, :forward_char)
@@ -106,8 +106,9 @@ module Textbringer
   GLOBAL_MAP.define_key(:dc, :delete_char)
   GLOBAL_MAP.define_key(?\C-d, :delete_char)
   GLOBAL_MAP.define_key(:backspace, :backward_delete_char)
-  GLOBAL_MAP.define_key(?\C-h, :backward_delete_char)
-  GLOBAL_MAP.define_key(?\C-?, :backward_delete_char)
+  # GLOBAL_MAP.define_key(?\C-h, :backward_delete_char)
+  # GLOBAL_MAP.define_key(?\C-?, :backward_delete_char)
+  GLOBAL_MAP.define_key(?\C-h, :help)
   GLOBAL_MAP.define_key(?\C-a, :beginning_of_line)
   GLOBAL_MAP.define_key(:home, :beginning_of_line)
   GLOBAL_MAP.define_key(?\C-e, :end_of_line)
@@ -185,6 +186,7 @@ module Textbringer
   GLOBAL_MAP.define_key([:f1, "b"], :describe_bindings)
   GLOBAL_MAP.define_key([:f1, "f"], :describe_command)
   GLOBAL_MAP.define_key([:f1, "k"], :describe_key)
+  GLOBAL_MAP.define_key([:f1, "d"], :debug_me)
   GLOBAL_MAP.handle_undefined_key do |key|
     if key.is_a?(String) && /[\0-\x7f]/ !~ key 
       :self_insert

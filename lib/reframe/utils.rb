@@ -2,7 +2,7 @@
 
 require "rbconfig"
 
-module Textbringer
+module ReFrame
   module Utils
     module_function
 
@@ -122,7 +122,7 @@ module Textbringer
           buffer.read_only = true
         end
       end
-      message(e.to_s.chomp)
+      message(e.to_s.chomp+" "+e.backtrace[0])
       Window.beep
     end
 

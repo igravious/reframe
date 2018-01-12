@@ -1,7 +1,7 @@
 require_relative "../../test_helper"
 require "tmpdir"
 
-class TestRubyMode < Textbringer::TestCase
+class TestRubyMode < ReFrame::TestCase
   setup do
     @buffer = Buffer.new_buffer("foo.rb")
     @buffer.apply_mode(RubyMode)

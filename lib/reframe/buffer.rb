@@ -5,7 +5,7 @@ require "unicode/display_width"
 require "json"
 require "fileutils"
 
-module Textbringer
+module ReFrame
   class Buffer
     extend Enumerable
 

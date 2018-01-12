@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestController < Textbringer::TestCase
+class TestController < ReFrame::TestCase
   setup do
     @window = Window.current
     @controller = Controller.new

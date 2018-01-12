@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   Face.define :comment, foreground: "yellow"
   Face.define :preprocessing_directive, foreground: "green"
   Face.define :keyword, foreground: "magenta", bold: true

@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestWindows < Textbringer::TestCase
+class TestWindows < ReFrame::TestCase
   def test_resize
     old_lines = Window.lines
     old_columns = Window.columns

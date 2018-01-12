@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestCtags < Textbringer::TestCase
+class TestCtags < ReFrame::TestCase
   def test_find_tag
     old_tag_mark_limit = CONFIG[:tag_mark_limit]
     CONFIG[:tag_mark_limit] = 4

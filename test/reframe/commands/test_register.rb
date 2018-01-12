@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestRegister < Textbringer::TestCase
+class TestRegister < ReFrame::TestCase
   setup do
     REGISTERS.clear
   end

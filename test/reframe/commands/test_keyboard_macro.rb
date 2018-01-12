@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestKeyboardMacro < Textbringer::TestCase
+class TestKeyboardMacro < ReFrame::TestCase
   def test_keyboard_macro
     push_keys "\C-x(hello world\n\C-x)\C-xee\C-u2\C-xe"
     recursive_edit

@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestMode < Textbringer::TestCase
+class TestMode < ReFrame::TestCase
   module FindFilesExt
     @@files = nil
 

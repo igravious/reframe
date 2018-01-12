@@ -1,7 +1,7 @@
 require_relative "../../test_helper"
 require "tmpdir"
 
-class TestCMode < Textbringer::TestCase
+class TestCMode < ReFrame::TestCase
   setup do
     @buffer = Buffer.new_buffer("foo.c")
     @c_mode = CMode.new(@buffer)

@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestCompletionListMode < Textbringer::TestCase
+class TestCompletionListMode < ReFrame::TestCase
   setup do
     @buffer = Buffer.new_buffer("*Completions*")
     @mode = CompletionListMode.new(@buffer)

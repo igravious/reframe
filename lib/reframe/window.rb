@@ -3,7 +3,7 @@
 require "curses"
 require "unicode/display_width"
 
-module Textbringer
+module ReFrame
   class Window
     KEY_NAMES = {}
     Curses.constants.grep(/\AKEY_/).each do |name|
@@ -22,6 +22,18 @@ module Textbringer
     @@current = nil
     @@echo_area = nil
     @@has_colors = false
+		require "rouge" # gets called before any mode
+		#@@opts = {:theme=>"thankful_eyes", :css_class=>"codehilite"} # TODO, don't need to do this, this is the default
+		#@@theme = ::Rouge::Theme.find(@@opts[:theme]).new or raise "unknown theme #{@@opts[:theme]}"
+		@@formatter = ::Rouge::Formatters::Buffer256.new()
+
+		def self.theme
+			@@theme
+		end
+
+		def self.formatter
+			@@formatter
+		end
 
     def self.list(include_echo_area: false)
       if include_echo_area
@@ -112,18 +124,30 @@ module Textbringer
     end
 
     def self.load_faces
-      require_relative "faces/basic"
-      require_relative "faces/programming"
+			require_relative "faces/basic"
+			require_relative "faces/programming"
     end
+
+		def self.curses_init
+      Curses.init_screen
+      Curses.noecho
+      Curses.raw
+      Curses.nonl
+		end
+
+		def self.restart
+      if @@started
+        raise EditorError, "Already started"
+      end
+			curses_init
+			redraw
+		end
 
     def self.start
       if @@started
         raise EditorError, "Already started"
       end
-      Curses.init_screen
-      Curses.noecho
-      Curses.raw
-      Curses.nonl
+			curses_init
       self.has_colors = Curses.has_colors?
       if has_colors?
         Curses.start_color
@@ -132,11 +156,11 @@ module Textbringer
       end
       begin
         window =
-          Textbringer::Window.new(Window.lines - 1, Window.columns, 0, 0)
+          ReFrame::Window.new(Window.lines - 1, Window.columns, 0, 0)
         window.buffer = Buffer.new_buffer("*scratch*")
         @@list.push(window)
         Window.current = window
-        @@echo_area = Textbringer::EchoArea.new(1, Window.columns,
+        @@echo_area = ReFrame::EchoArea.new(1, Window.columns,
                                                 Window.lines - 1, 0)
         Buffer.minibuffer.keymap = MINIBUFFER_LOCAL_MAP
         @@echo_area.buffer = Buffer.minibuffer
@@ -144,17 +168,21 @@ module Textbringer
         @@started = true
         yield
       ensure
-        @@list.each do |win|
-          win.close
-        end
+				@@list.each do |win|
+					win.close
+				end
         @@list.clear
-        Curses.echo
-        Curses.noraw
-        Curses.nl
-        Curses.close_screen
-        @@started = false
+				curses_suspend
       end
     end
+
+		def self.curses_suspend
+			Curses.echo
+			Curses.noraw
+			Curses.nl
+			Curses.close_screen
+      @@started = false
+		end
 
     def self.redisplay
       return if Controller.current.executing_keyboard_macro?
@@ -350,6 +378,35 @@ module Textbringer
       end
     end
 
+		def rouge_highlight
+      @highlight_on = {}
+      @highlight_off = {}
+      return if !@@has_colors || !CONFIG[:syntax_highlight] || @buffer.binary?
+			# make some nice lexed source
+			source = if @buffer.bytesize < CONFIG[:highlight_buffer_size_limit]
+        base_pos = @buffer.point_min
+        @buffer.to_s
+      else
+        base_pos = @buffer.point
+        len = columns * (lines - 1) / 2 * 3
+        @buffer.substring(@buffer.point, @buffer.point + len).scrub("")
+      end
+			lexer = @buffer.mode.class.lexer
+			result = ReFrame::Window.formatter.format(lexer.lex(source)) do |style_attrs, val_str, reset_attrs|
+				b = base_pos
+				e = b + val_str.bytesize 
+        if b < @buffer.point && @buffer.point < e
+          b = @buffer.point
+        end
+				if style_attrs # and (val_str =~ /^[[:space:]]+/).nil?
+					#debug(binding)
+					@highlight_on[b] = style_attrs
+					@highlight_off[e] = style_attrs
+				end
+				base_pos = e
+			end
+		end
+
     def highlight
       @highlight_on = {}
       @highlight_off = {}
@@ -396,7 +453,8 @@ module Textbringer
         framer
         y = x = 0
         @buffer.point_to_mark(@top_of_window)
-        highlight
+				highlighter = @buffer.mode.class.highlighter || :highlight
+        send(highlighter)
         @window.erase
         @window.setpos(0, 0)
         @window.attrset(0)

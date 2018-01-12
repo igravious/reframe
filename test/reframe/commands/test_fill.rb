@@ -1,11 +1,12 @@
 require_relative "../../test_helper"
 
-class TestBuffers < Textbringer::TestCase
+class TestBuffers < ReFrame::TestCase
   def test_fill_region
     buffer.insert(<<EOF)
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.reframe/buffer_dump on crash.
+ReFrame is beta software, and you may lose your text.  Unsaved
+buffers will be dumped in ~/.reframe/buffer_dump on crash.
 APIs are undocumented and unstable.  There is no compatibility even in the same minor versions.
 
 ## Installation
@@ -18,7 +19,7 @@ EOF
     assert_equal(<<EOF, buffer.to_s)
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved
+ReFrame is beta software, and you may lose your text.  Unsaved
 buffers will be dumped in ~/.reframe/buffer_dump on crash.
 APIs are undocumented and unstable.  There is no compatibility even in the same minor versions.
 
@@ -112,8 +113,8 @@ EOF
     buffer.insert(<<EOF)
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.reframe/buffer_dump on crash.
-APIs are undocumented and unstable.  There is no compatibility even in the same minor versions.
+ReFrame is beta software, and you may lose your text.  Unsaved buffers will be dumped in ~/.reframe/buffer_dump on crash. APIs are
+undocumented and unstable.  There is no compatibility even in the same minor versions.
 
 ## Installation
 EOF
@@ -123,10 +124,10 @@ EOF
     assert_equal(<<EOF, buffer.to_s)
 ## WARNING
 
-Textbringer is beta software, and you may lose your text.  Unsaved
-buffers will be dumped in ~/.reframe/buffer_dump on crash. APIs
-are undocumented and unstable.  There is no compatibility even in the
-same minor versions.
+ReFrame is beta software, and you may lose your text.  Unsaved buffers
+will be dumped in ~/.reframe/buffer_dump on crash. APIs are
+undocumented and unstable.  There is no compatibility even in the same
+minor versions.
 
 ## Installation
 EOF

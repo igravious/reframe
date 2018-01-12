@@ -2,7 +2,7 @@
 
 require "ripper"
 
-module Textbringer
+module ReFrame
   CONFIG[:ruby_indent_level] = 2
   CONFIG[:ruby_indent_tabs_mode] = false
 

@@ -43,6 +43,12 @@ def load_user_config
   end
 end
 
+def debug(the_binding)
+	Window.curses_suspend
+	the_binding.pry # gem install binding_of_caller
+	Window.restart
+end
+
 $VERBOSE = nil
 
 Controller.current = Controller.new
@@ -51,6 +57,7 @@ begin
     begin
       Plugin.load_plugins
       load_user_config
+			#debug(binding)
       ruby_mode
       if ARGV.size > 0
         ARGV.each do |arg|

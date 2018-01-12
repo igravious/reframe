@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestProgrammingMode < Textbringer::TestCase
+class TestProgrammingMode < ReFrame::TestCase
   setup do
     @buffer = Buffer.new_buffer("foo.rb")
     @programming_mode = ProgrammingMode.new(@buffer)

@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestHelp < Textbringer::TestCase
+class TestHelp < ReFrame::TestCase
   def test_describe_bindings
     describe_bindings
     s = Buffer.current.to_s

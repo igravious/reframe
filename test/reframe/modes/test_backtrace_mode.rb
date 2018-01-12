@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestBacktraceMode < Textbringer::TestCase
+class TestBacktraceMode < ReFrame::TestCase
   def test_jump_to_location
     pwd = Dir.pwd
     Dir.chdir(File.expand_path("../../fixtures/ctags", __dir__))

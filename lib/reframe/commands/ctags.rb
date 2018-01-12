@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module Commands
     CTAGS = {
       path: nil,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module Commands
     ISEARCH_MODE_MAP = Keymap.new
     (?\x20..?\x7e).each do |c|

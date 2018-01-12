@@ -2,7 +2,7 @@
 
 require "curses"
 
-module Textbringer
+module ReFrame
   class Face
     attr_reader :name, :attributes
 

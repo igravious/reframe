@@ -2,7 +2,7 @@
 
 require "editorconfig"
 
-module Textbringer
+module ReFrame
   module Commands
     define_command(:find_file, doc: "Open or create a file.") do
       |file_name = read_file_name("Find file: ")|

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module Commands
     define_command(:forward_char,
                    doc: "Move point n characters forward.") do

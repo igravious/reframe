@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestColor < Textbringer::TestCase
+class TestColor < ReFrame::TestCase
   def test_aref
     assert_equal(Curses::COLOR_BLACK, Color["black"])
     assert_equal(Curses::COLOR_MAGENTA, Color["magenta"])

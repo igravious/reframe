@@ -1,9 +1,9 @@
 require_relative "../../test_helper"
 
-class TestMisc < Textbringer::TestCase
+class TestMisc < ReFrame::TestCase
   def test_version
     version
-    assert_match(/\ATextbringer #{Textbringer::VERSION}/,
+    assert_match(/\AReFrame #{ReFrame::VERSION}/,
                  Window.echo_area.message)
   end
 
@@ -25,7 +25,7 @@ class TestMisc < Textbringer::TestCase
   def test_execute_command
     execute_command(:version)
     assert_equal(:version, Controller.current.this_command)
-    assert_match(/\ATextbringer #{Textbringer::VERSION}/,
+    assert_match(/\AReFrame #{ReFrame::VERSION}/,
                  Window.echo_area.message)
 
     assert_raise(EditorError) do

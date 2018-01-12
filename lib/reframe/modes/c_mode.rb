@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   CONFIG[:c_indent_level] = 4
   CONFIG[:c_indent_tabs_mode] = true
   CONFIG[:c_continued_statement_offset] = 4

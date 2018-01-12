@@ -138,9 +138,9 @@ class << Curses
   end
 end
 
-Textbringer::Window.load_faces
+ReFrame::Window.load_faces
 
-module Textbringer
+module ReFrame
   class FakeController < Controller
     attr_reader :test_key_buffer
     attr_writer :last_key
@@ -210,7 +210,7 @@ module Textbringer
 
     def addstr(s)
       @contents[@cury].concat(s)
-      @curx = Textbringer::Buffer.display_width(@contents[@cury])
+      @curx = ReFrame::Buffer.display_width(@contents[@cury])
     end
 
     def get_char
@@ -241,11 +241,11 @@ module Textbringer
         self.has_colors = true
         @@list.clear
         window =
-          Textbringer::Window.new(Window.lines - 1, Window.columns, 0, 0)
+          ReFrame::Window.new(Window.lines - 1, Window.columns, 0, 0)
         window.buffer = Buffer.new_buffer("*scratch*")
         @@list.push(window)
         Window.current = window
-        @@echo_area = Textbringer::EchoArea.new(1, Window.columns,
+        @@echo_area = ReFrame::EchoArea.new(1, Window.columns,
                                                 Window.lines - 1, 0)
         Buffer.minibuffer.keymap = MINIBUFFER_LOCAL_MAP
         @@echo_area.buffer = Buffer.minibuffer
@@ -303,5 +303,5 @@ module Textbringer
   end
 end
 
-include Textbringer
+include ReFrame
 include Commands

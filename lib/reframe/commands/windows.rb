@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module Commands
     define_command(:resize_window,
                    doc: "Resize windows to fit the terminal size.") do

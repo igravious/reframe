@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   TOP_LEVEL_TAG = Object.new
   RECURSIVE_EDIT_TAG = Object.new
 

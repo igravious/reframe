@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module FillExtension
     refine Buffer do
       def fill_region(s = Buffer.current.point, e = Buffer.current.mark)

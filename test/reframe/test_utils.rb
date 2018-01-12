@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestUtils < Textbringer::TestCase
+class TestUtils < ReFrame::TestCase
   def test_message
     message("hello world")
     assert_equal("hello world", Window.echo_area.message)

@@ -2,7 +2,7 @@
 
 require "curses"
 
-module Textbringer
+module ReFrame
   module Color
     BASIC_COLORS = {
       "default" => -1,

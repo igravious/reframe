@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   class Mode
     extend Commands
     include Commands
@@ -20,6 +20,8 @@ module Textbringer
       attr_accessor :command_name
       attr_accessor :hook_name
       attr_accessor :file_name_pattern
+      attr_accessor :lexer
+      attr_accessor :highlighter
       attr_accessor :interpreter_name_pattern
       attr_reader :syntax_table
     end

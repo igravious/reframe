@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestKeymap < Textbringer::TestCase
+class TestKeymap < ReFrame::TestCase
   def test_lookup
     keymap = Keymap.new
     keymap.define_key("a", :a)

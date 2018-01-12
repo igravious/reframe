@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module DabbrevExtension
     refine Buffer do
       def dabbrev_expand(contd = false)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   class HelpMode < Mode
     define_generic_command :jump_to_link
 

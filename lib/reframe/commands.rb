@@ -3,7 +3,7 @@
 require "open3"
 require "io/wait"
 
-module Textbringer
+module ReFrame
   Command = Struct.new(:name, :block, :doc)
 
   module Commands

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   CONFIG = {
     east_asian_ambiguous_width: 1,
     default_file_encoding: Encoding::UTF_8,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   class BacktraceMode < Mode
     define_generic_command :jump_to_source_location
 

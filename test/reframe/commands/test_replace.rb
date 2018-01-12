@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestReplace < Textbringer::TestCase
+class TestReplace < ReFrame::TestCase
   def test_query_replace_regexp
     buffer = Buffer.current
     buffer.insert(<<EOF)

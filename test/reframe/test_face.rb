@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestFace < Textbringer::TestCase
+class TestFace < ReFrame::TestCase
   def test_define
     foo = Face.define(:foo, foreground: "yellow")
     assert_equal(foo, Face[:foo])

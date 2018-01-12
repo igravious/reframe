@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestFiles < Textbringer::TestCase
+class TestFiles < ReFrame::TestCase
   def test_find_file
     mkcdtmpdir do
       find_file("foo.txt")

@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestClipboard < Textbringer::TestCase
+class TestClipboard < ReFrame::TestCase
   def test_clipboard_copy_region
     omit unless CLIPBOARD_AVAILABLE
     insert("あいうえお\n")

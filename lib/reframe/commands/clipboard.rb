@@ -6,7 +6,7 @@ end
 
 require "clipboard"
 
-module Textbringer
+module ReFrame
   module Commands
     CLIPBOARD_AVAILABLE =
       Clipboard.implementation.name != "Clipboard::Linux" ||

@@ -1,6 +1,6 @@
 require_relative "../../test_helper"
 
-class TestIsearch < Textbringer::TestCase
+class TestIsearch < ReFrame::TestCase
   def test_isearch_forward
     buffer = Buffer.current
     buffer.insert(<<EOF)

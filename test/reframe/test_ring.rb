@@ -1,6 +1,6 @@
 require_relative "../test_helper"
 
-class TestKillRing < Textbringer::TestCase
+class TestKillRing < ReFrame::TestCase
   def test_push
     ring = Ring.new(3)
     assert_raise(EditorError) do

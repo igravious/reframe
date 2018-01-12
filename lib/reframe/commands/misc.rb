@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-module Textbringer
+module ReFrame
   module Commands
+		define_command(:debug_me) do
+			debug(TOPLEVEL_BINDING)
+		end
     define_command(:version) do
-      message("Textbringer #{Textbringer::VERSION} "\
+      message("ReFrame #{ReFrame::VERSION} "\
               "(ruby #{RUBY_VERSION} [#{RUBY_PLATFORM}])")
     end
 
