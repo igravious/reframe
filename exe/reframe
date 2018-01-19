@@ -27,77 +27,75 @@ else
 end
 
 # C-x C-c
-class Program
-  include ReFrame
+include ReFrame
 
-  EXEC = File.basename($0).freeze
-  puts "#{EXEC} #{ARGV.join(' ')}"
-  puts "ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
-  puts "#{EXEC} #{VERSION}"
+EXEC = File.basename($0).freeze
+puts "#{EXEC} #{ARGV.join(' ')}"
+puts "ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
+puts "#{EXEC} #{VERSION}"
 
-  include Commands
+include Commands
 
-  def load_user_config
-    config_file = File.expand_path('~/.reframe.rb')
-    begin
-      load(config_file)
-    rescue LoadError
-    end
+def load_user_config
+  config_file = File.expand_path('~/.reframe.rb')
+  begin
+    load(config_file)
+  rescue LoadError
   end
+end
 
-  def debug(the_binding)
-    Window.curses_suspend
+def debug(the_binding)
+  Window.curses_suspend
+  begin
+    the_binding.pry # gem install binding_of_caller
+    Window.restart
+  rescue
+    Window.restart
+    raise
+  end
+end
+
+$VERBOSE = nil
+
+Controller.current = Controller.new
+begin
+  Window.start do
     begin
-      the_binding.pry # gem install binding_of_caller
-      Window.restart
-    rescue
-      Window.restart
+      Plugin.load_plugins
+      load_user_config
+      semetext_mode
+      if ARGV.size.positive?
+        ARGV.each do |arg|
+          find_file(arg)
+        end
+      end
+      if Buffer.dumped_buffers_exist?(CONFIG[:buffer_dump_dir])
+        Window.redisplay
+        if yes_or_no?('Dumped buffers found; restore them?')
+          buffers = Buffer.load_dumped_buffers(CONFIG[:buffer_dump_dir])
+          switch_to_buffer(buffers.last)
+        end
+      end
+    rescue StandardError => e
+      show_exception(e)
+    end
+    Window.redisplay
+    begin
+      trap(:CONT) { Window.redraw }
+    rescue ArgumentError
+    end
+    begin
+      loop do
+        Controller.current.command_loop(TOP_LEVEL_TAG)
+        Window.redisplay
+      end
+    rescue StandardError => e
+      unless e.is_a?(SystemExit)
+        Buffer.dump_unsaved_buffers(CONFIG[:buffer_dump_dir])
+      end
       raise
     end
   end
-
-  $VERBOSE = nil
-
-  Controller.current = Controller.new
-  begin
-    Window.start do
-      begin
-        Plugin.load_plugins
-        load_user_config
-        semetext_mode
-        if ARGV.size.positive?
-          ARGV.each do |arg|
-            find_file(arg)
-          end
-        end
-        if Buffer.dumped_buffers_exist?(CONFIG[:buffer_dump_dir])
-          Window.redisplay
-          if yes_or_no?('Dumped buffers found; restore them?')
-            buffers = Buffer.load_dumped_buffers(CONFIG[:buffer_dump_dir])
-            switch_to_buffer(buffers.last)
-          end
-        end
-      rescue StandardError => e
-        show_exception(e)
-      end
-      Window.redisplay
-      begin
-        trap(:CONT) { Window.redraw }
-      rescue ArgumentError
-      end
-      begin
-        loop do
-          Controller.current.command_loop(TOP_LEVEL_TAG)
-          Window.redisplay
-        end
-      rescue StandardError => e
-        unless e.is_a?(SystemExit)
-          Buffer.dump_unsaved_buffers(CONFIG[:buffer_dump_dir])
-        end
-        raise
-      end
-    end
-  ensure
-    Controller.current.close
-  end
+ensure
+  Controller.current.close
 end
