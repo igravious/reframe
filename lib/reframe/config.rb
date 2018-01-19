@@ -8,15 +8,15 @@ module ReFrame
     tab_width: 8,
     indent_tabs_mode: false,
     case_fold_search: true,
-    buffer_dump_dir: File.expand_path("~/.reframe/buffer_dump"),
+    buffer_dump_dir: File.expand_path('~/.reframe/buffer_dump'),
     mark_ring_max: 16,
     global_mark_ring_max: 16,
     window_min_height: 4,
     syntax_highlight: true,
-    highlight_buffer_size_limit: 102400,
-    shell_file_name: ENV["SHELL"],
-    shell_command_switch: "-c",
-    grep_command: "grep -nH -e",
+    highlight_buffer_size_limit: 102_400,
+    shell_file_name: ENV['SHELL'],
+    shell_command_switch: '-c',
+    grep_command: 'grep -nH -e',
     fill_column: 70
   }
 end

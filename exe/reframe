@@ -1,42 +1,44 @@
 #!/usr/bin/env ruby
 
+# frozen_string_literal:true
+
 # `bundle exec exe/reframe' in vendored mode
-BUNDLE_MSG="try `bundle exec exe/reframe' if/when in dev mode"
-OW=lambda{"#{$!}"}
-def ow!() "#{$!}"; end
+BUNDLE_MSG = 'try `bundle exec exe/reframe\' if/when in vendored mode'
+OW = -> { $!.to_s }
+def ow!() $!.to_s; end
 if ENV.key?('REFRAME_ENV')
-	# http://bundler.io/rubygems.html
-	begin
-		Bundler.require(ENV['REFRAME_ENV'])
-	rescue NameError
-		raise unless ow! =~ /uninitialized constant Bundler/
-		puts BUNDLE_MSG
-		exit
-	end
-	require_relative "../lib/reframe"
+  # http://bundler.io/rubygems.html
+  begin
+    Bundler.require(ENV['REFRAME_ENV'])
+  rescue NameError
+    raise unless ow! =~ /uninitialized constant Bundler/
+    puts BUNDLE_MSG
+    exit
+  end
+  require_relative '../lib/reframe'
 else
-	begin
-		require "reframe"
-	rescue LoadError
-		raise unless ow! =~ /reframe/
-		puts BUNDLE_MSG
-		exit
-	end
+  begin
+    require 'reframe'
+  rescue LoadError
+    raise unless ow! =~ /reframe/
+    puts BUNDLE_MSG
+    exit
+  end
 end
 
 # C-x C-c
 
 include ReFrame
 
-EXEC=File.basename($0).freeze
+EXEC = File.basename($0).freeze
 puts "#{EXEC} #{ARGV.join(' ')}"
-puts "ruby #{ RUBY_VERSION }p#{ RUBY_PATCHLEVEL }"
+puts "ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 puts "#{EXEC} #{VERSION}"
 
 include Commands
 
 def load_user_config
-  config_file = File.expand_path("~/.reframe.rb")
+  config_file = File.expand_path('~/.reframe.rb')
   begin
     load(config_file)
   rescue LoadError
@@ -44,9 +46,14 @@ def load_user_config
 end
 
 def debug(the_binding)
-	Window.curses_suspend
-	the_binding.pry # gem install binding_of_caller
-	Window.restart
+  Window.curses_suspend
+  begin
+    the_binding.pry # gem install binding_of_caller
+    Window.restart
+  rescue
+    Window.restart
+    raise
+  end
 end
 
 $VERBOSE = nil
@@ -57,8 +64,7 @@ begin
     begin
       Plugin.load_plugins
       load_user_config
-			#debug(binding)
-      ruby_mode
+      semetext_mode
       if ARGV.size > 0
         ARGV.each do |arg|
           find_file(arg)
@@ -66,12 +72,12 @@ begin
       end
       if Buffer.dumped_buffers_exist?(CONFIG[:buffer_dump_dir])
         Window.redisplay
-        if yes_or_no?("Dumped buffers found; restore them?")
+        if yes_or_no?('Dumped buffers found; restore them?')
           buffers = Buffer.load_dumped_buffers(CONFIG[:buffer_dump_dir])
           switch_to_buffer(buffers.last)
         end
       end
-    rescue Exception => e
+    rescue StandardError => e
       show_exception(e)
     end
     Window.redisplay
@@ -84,8 +90,8 @@ begin
         Controller.current.command_loop(TOP_LEVEL_TAG)
         Window.redisplay
       end
-    rescue Exception => e
-      if !e.is_a?(SystemExit)
+    rescue StandardError => e
+      unless e.is_a?(SystemExit)
         Buffer.dump_unsaved_buffers(CONFIG[:buffer_dump_dir])
       end
       raise

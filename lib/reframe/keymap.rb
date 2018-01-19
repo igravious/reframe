@@ -13,7 +13,7 @@ module ReFrame
 
       case key_sequence.size
       when 0
-        raise ArgumentError, "Empty key"
+        raise ArgumentError, 'Empty key'
       when 1
         @map[key_sequence.first] = command
       else
@@ -26,7 +26,7 @@ module ReFrame
     def lookup(key_sequence)
       case key_sequence.size
       when 0
-        raise ArgumentError, "Empty key"
+        raise ArgumentError, 'Empty key'
       when 1
         @map[key_sequence.first]
       else
@@ -46,30 +46,30 @@ module ReFrame
     end
 
     def handle_undefined_key
-      @map.default_proc = Proc.new { |h, k| yield(k) }
+      @map.default_proc = proc { |_, k| yield(k) }
     end
 
     def self.key_name(key)
       case key
       when Symbol
         "<#{key}>"
-      when " "
-        "SPC"
+      when ' '
+        'SPC'
       when "\t"
-        "TAB"
+        'TAB'
       when "\e"
-        "ESC"
+        'ESC'
       when "\C-m"
-        "RET"
+        'RET'
       when /\A[\0-\x1f\x7f]\z/
-        "C-" + (key.ord ^ 0x40).chr.downcase
+        'C-' + (key.ord ^ 0x40).chr.downcase
       else
         key.to_s
       end
     end
 
     def self.key_sequence_string(key_sequence)
-      key_sequence.map { |key| key_name(key) }.join(" ")
+      key_sequence.map { |key| key_name(key) }.join(' ')
     end
 
     private
@@ -154,6 +154,8 @@ module ReFrame
   GLOBAL_MAP.define_key("\C-z", :suspend_reframe)
   GLOBAL_MAP.define_key("\C-x\C-f", :find_file)
   GLOBAL_MAP.define_key("\C-xb", :switch_to_buffer)
+  GLOBAL_MAP.define_key("\C-x\C-l", :list_buffers)
+  GLOBAL_MAP.define_key("\C-\t", :next_buffer)
   GLOBAL_MAP.define_key("\C-x\C-s", :save_buffer)
   GLOBAL_MAP.define_key("\C-x\C-w", :write_file)
   GLOBAL_MAP.define_key("\C-xk", :kill_buffer)
@@ -183,16 +185,14 @@ module ReFrame
   GLOBAL_MAP.define_key("\C-xe", :end_and_call_keyboard_macro)
   GLOBAL_MAP.define_key(:f4, :end_or_call_keyboard_macro)
   GLOBAL_MAP.define_key("\eq", :fill_paragraph)
-  GLOBAL_MAP.define_key([:f1, "b"], :describe_bindings)
-  GLOBAL_MAP.define_key([:f1, "f"], :describe_command)
-  GLOBAL_MAP.define_key([:f1, "k"], :describe_key)
-  GLOBAL_MAP.define_key([:f1, "d"], :debug_me)
+  GLOBAL_MAP.define_key([:f1, 'b'], :describe_bindings)
+  GLOBAL_MAP.define_key([:f1, 'f'], :describe_command)
+  GLOBAL_MAP.define_key([:f1, 'k'], :describe_key)
+  GLOBAL_MAP.define_key([:f1, 'd'], :debug_me)
   GLOBAL_MAP.handle_undefined_key do |key|
-    if key.is_a?(String) && /[\0-\x7f]/ !~ key 
+    if key.is_a?(String) && /[\0-\x7f]/ !~ key
       :self_insert
-    else
-      nil
-    end
+    end # else nil
   end
 
   MINIBUFFER_LOCAL_MAP = Keymap.new
@@ -200,4 +200,6 @@ module ReFrame
   MINIBUFFER_LOCAL_MAP.define_key("\C-m", :exit_recursive_edit)
   MINIBUFFER_LOCAL_MAP.define_key(?\t, :complete_minibuffer)
   MINIBUFFER_LOCAL_MAP.define_key(?\C-g, :abort_recursive_edit)
+
+  PROPBUFFER_LOCAL_MAP = Keymap.new
 end

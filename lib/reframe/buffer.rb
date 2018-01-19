@@ -64,6 +64,8 @@ module ReFrame
     @@list = []
     @@current = nil
     @@minibuffer = nil
+    @@nullbuffer = nil
+		@@propbuffer = nil
     @@global_mark_ring = nil
 
     def self.auto_detect_encodings
@@ -103,9 +105,22 @@ module ReFrame
       @@current = buffer
     end
 
+    def self.rotate!
+      @@list.rotate!
+      @@current = @@list.first
+    end
+
     def self.minibuffer
       @@minibuffer ||= Buffer.new(name: "*Minibuffer*")
     end
+
+    def self.nullbuffer
+      @@nullbuffer ||= Buffer.new(name: "*Nullbuffer*")
+    end
+
+		def self.propbuffer
+			@@propbuffer ||= Buffer.new(name: "*Propbuffer*")
+		end
 
     def self.global_mark_ring
       @@global_mark_ring ||= Ring.new(CONFIG[:global_mark_ring_max])

@@ -22,7 +22,7 @@ module ReFrame
     end
 
     def initialize
-      @top_self = eval("self", TOPLEVEL_BINDING)
+      @top_self = eval('self', TOPLEVEL_BINDING, __FILE__, __LINE__)
       @key_sequence = []
       @last_key = nil
       @recursive_edit_level = 0
@@ -75,16 +75,14 @@ module ReFrame
                 @last_command = @this_command
                 @this_command = nil
               end
-            else
-              if cmd.nil?
-                keys = Keymap.key_sequence_string(@key_sequence)
-                @key_sequence.clear
-                @prefix_arg = nil
-                message("#{keys} is undefined")
-              end
-            end
+            elsif cmd.nil?
+              keys = Keymap.key_sequence_string(@key_sequence)
+              @key_sequence.clear
+              @prefix_arg = nil
+              message("#{keys} is undefined")
+          end
             Window.redisplay
-          rescue Exception => e
+          rescue StandardError => e
             show_exception(e)
             @prefix_arg = nil
             @recording_keyboard_macro = nil
@@ -131,9 +129,7 @@ module ReFrame
         files, = IO.select(wait_files, [], [], 1)
         # KEY_RESIZE may be returned even if STDIN is not included in files.
         event = read_event_nonblock
-        if event
-          return event
-        end
+        return event if event
         if !Window.echo_area.active? && files&.include?(@next_tick_input)
           c = @next_tick_input.read_nonblock(1, exception: false)
           if !c.nil? && c != :wait_readable
@@ -152,10 +148,8 @@ module ReFrame
     end
 
     def received_keyboard_quit?
-      while key = read_event_nonblock
-        if GLOBAL_MAP.lookup([key]) == :keyboard_quit
-          return true
-        end
+      while (key = read_event_nonblock)
+        return true if GLOBAL_MAP.lookup([key]) == :keyboard_quit
       end
       false
     end
@@ -163,9 +157,7 @@ module ReFrame
     def recursive_edit
       @recursive_edit_level += 1
       begin
-        if command_loop(RECURSIVE_EDIT_TAG)
-          raise Quit
-        end
+        raise Quit if command_loop(RECURSIVE_EDIT_TAG)
       ensure
         @recursive_edit_level -= 1
       end
@@ -174,22 +166,22 @@ module ReFrame
     def echo_input
       return if executing_keyboard_macro?
       if @prefix_arg || !@key_sequence.empty?
-        if !@echo_immediately
+        unless @echo_immediately
           return if wait_input(1000)
         end
         @echo_immediately = true
         s = String.new
         if @prefix_arg
-          s << "C-u"
+          s << 'C-u'
           if @prefix_arg != [4]
             s << "(#{@prefix_arg.inspect})"
           end
         end
-        if !@key_sequence.empty?
-          s << " " if !s.empty?
+        unless @key_sequence.empty?
+          s << ' ' unless s.empty?
           s << Keymap.key_sequence_string(@key_sequence)
         end
-        s << "-"
+        s << '-'
         Window.echo_area.show(s)
         Window.echo_area.redisplay
         Window.current.window.noutrefresh
@@ -202,17 +194,17 @@ module ReFrame
     def start_keyboard_macro
       if @recording_keyboard_macro
         @recording_keyboard_macro = nil
-        raise EditorError, "Already recording keyboard macro"
+        raise EditorError, 'Already recording keyboard macro'
       end
       @recording_keyboard_macro = []
     end
 
     def end_keyboard_macro
       if @recording_keyboard_macro.nil?
-        raise EditorError, "Not recording keyboard macro"
+        raise EditorError, 'Not recording keyboard macro'
       end
       if @recording_keyboard_macro.empty?
-        raise EditorError, "Empty keyboard macro"
+        raise EditorError, 'Empty keyboard macro'
       end
       @recording_keyboard_macro.pop(@this_command_keys.size)
       @last_keyboard_macro = @recording_keyboard_macro
@@ -232,7 +224,7 @@ module ReFrame
 
     def call_last_keyboard_macro(n)
       if @last_keyboard_macro.nil?
-        raise EditorError, "Keyboard macro not defined"
+        raise EditorError, 'Keyboard macro not defined'
       end
       execute_keyboard_macro(@last_keyboard_macro, n)
     end
@@ -247,7 +239,7 @@ module ReFrame
 
     def key_binding(key_sequence)
       @overriding_map&.lookup(key_sequence) ||
-      Buffer.current&.keymap&.lookup(key_sequence) ||
+        Buffer.current&.keymap&.lookup(key_sequence) ||
         GLOBAL_MAP.lookup(key_sequence)
     end
 

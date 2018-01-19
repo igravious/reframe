@@ -82,6 +82,23 @@ module ReFrame
       end
     end
 
+    define_command(:list_buffers, doc: <<~EOD) do
+				List the available buffers.
+			EOD
+			s = ""
+			Buffer.each { |b|
+				#debug(binding)
+				s += ' '+b.name
+			}
+			message("Buffers:#{s}")
+    end
+
+		define_command(:next_buffer, doc: <<~EOD) do
+				Switch to the next buffer.
+			EOD
+			Window.current.buffer = Buffer.rotate!
+		end
+
     define_command(:bury_buffer, doc: <<~EOD) do
         Put buffer at the end of the buffer list.
       EOD

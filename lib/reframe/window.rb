@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "curses"
-require "unicode/display_width"
+require 'curses'
+require 'unicode/display_width'
 
 module ReFrame
   class Window
@@ -16,24 +16,31 @@ module ReFrame
       ALT_NUMBER_BASE = Curses::ALT_0 - ?0.ord
       ALT_ALPHA_BASE = Curses::ALT_A - ?a.ord
     end
+  
+    EXTENT = 80 # the sacred 80
 
     @@started = false
     @@list = []
     @@current = nil
+
+    # special windows
     @@echo_area = nil
+    @@property_pane = nil
+    @@separator = EXTENT + 1 # makes sense
+
     @@has_colors = false
-		require "rouge" # gets called before any mode
-		#@@opts = {:theme=>"thankful_eyes", :css_class=>"codehilite"} # TODO, don't need to do this, this is the default
-		#@@theme = ::Rouge::Theme.find(@@opts[:theme]).new or raise "unknown theme #{@@opts[:theme]}"
-		@@formatter = ::Rouge::Formatters::Buffer256.new()
+    require "rouge" # gets called before any mode
+    #@@opts = {:theme=>"thankful_eyes", :css_class=>"codehilite"} # TODO, don't need to do this, this is the default
+    #@@theme = ::Rouge::Theme.find(@@opts[:theme]).new or raise "unknown theme #{@@opts[:theme]}"
+    @@formatter = ::Rouge::Formatters::Buffer256.new()
 
-		def self.theme
-			@@theme
-		end
+    def self.theme
+      @@theme
+    end
 
-		def self.formatter
-			@@formatter
-		end
+    def self.formatter
+      @@formatter
+    end
 
     def self.list(include_echo_area: false)
       if include_echo_area
@@ -58,7 +65,7 @@ module ReFrame
     end
 
     def self.delete_window
-      if @@current.echo_area?
+      if @@current.special?
         raise EditorError, "Can't delete the echo area"
       end
       if @@list.size == 2
@@ -78,11 +85,11 @@ module ReFrame
     end
 
     def self.delete_other_windows
-      if @@current.echo_area?
+      if @@current.special?
         raise EditorError, "Can't expand the echo area to full screen"
       end
       @@list.delete_if do |window|
-        if window.current? || window.echo_area?
+        if window.current? || window.special?
           false
         else
           window.delete
@@ -95,16 +102,21 @@ module ReFrame
 
     def self.other_window
       i = @@list.index(@@current)
-      begin
+      loop do
         i += 1
         window = @@list[i % @@list.size]
-      end while !window.active?
+        break if window.active?
+      end
       self.current = window
     end
 
     def self.echo_area
       @@echo_area
     end
+
+		def self.property_pane
+			@@properties
+		end
 
     def self.has_colors=(value)
       @@has_colors = value
@@ -155,16 +167,29 @@ module ReFrame
         load_faces
       end
       begin
-        window =
-          ReFrame::Window.new(Window.lines - 1, Window.columns, 0, 0)
+				# has a mode (context line) – h,w,y,x – leave room for echo area
+        window = ReFrame::Window.new(Window.lines - 1, Window.separator - 1, 0, 0)
         window.buffer = Buffer.new_buffer("*scratch*")
         @@list.push(window)
         Window.current = window
-        @@echo_area = ReFrame::EchoArea.new(1, Window.columns,
-                                                Window.lines - 1, 0)
+
+				# does this really need to be a class var?
+				separator = ReFrame::Separator.new(Window.lines - 1, 1, 0, Window.separator - 1)
+				Buffer.nullbuffer.keymap = nil
+				separator.buffer = Buffer.nullbuffer
+        @@list.push(separator)
+
+				# has a mode 
+				@@property_pane = ReFrame::Window.new(Window.lines - 1, Window.columns - Window.separator, 0, Window.separator)
+				Buffer.propbuffer.keymap = PROPBUFFER_LOCAL_MAP
+				@@property_pane.buffer = Buffer.propbuffer
+        @@list.push(@@property_pane)
+
+        @@echo_area = ReFrame::EchoArea.new(1, Window.columns, Window.lines - 1, 0)
         Buffer.minibuffer.keymap = MINIBUFFER_LOCAL_MAP
         @@echo_area.buffer = Buffer.minibuffer
         @@list.push(@@echo_area)
+
         @@started = true
         yield
       ensure
@@ -211,12 +236,16 @@ module ReFrame
     end
 
     def self.columns
-      Curses.cols
+      Curses.cols 
+    end
+
+    def self.separator
+      @@separator
     end
 
     def self.resize
       @@list.delete_if do |window|
-        if !window.echo_area? &&
+        if !window.special? &&
             window.y > Window.lines - CONFIG[:window_min_height]
           window.delete
           true
@@ -225,7 +254,7 @@ module ReFrame
         end
       end
       @@list.each_with_index do |window, i|
-        unless window.echo_area?
+        unless window.special?
           if i < @@list.size - 2
             window.resize(window.lines, Window.columns)
           else
@@ -262,7 +291,7 @@ module ReFrame
       @key_buffer = []
     end
 
-    def echo_area?
+    def special?
       false
     end
 
@@ -392,14 +421,13 @@ module ReFrame
         @buffer.substring(@buffer.point, @buffer.point + len).scrub("")
       end
 			lexer = @buffer.mode.class.lexer
-			result = ReFrame::Window.formatter.format(lexer.lex(source)) do |style_attrs, val_str, reset_attrs|
+			ReFrame::Window.formatter.format(lexer.lex(source)) do |style_attrs, val_str, reset_attrs|
 				b = base_pos
 				e = b + val_str.bytesize 
         if b < @buffer.point && @buffer.point < e
           b = @buffer.point
         end
 				if style_attrs # and (val_str =~ /^[[:space:]]+/).nil?
-					#debug(binding)
 					@highlight_on[b] = style_attrs
 					@highlight_off[e] = style_attrs
 				end
@@ -482,10 +510,10 @@ module ReFrame
               @window.attron(Curses::A_REVERSE)
             end
           end
-          if attrs = @highlight_off[@buffer.point]
+          if (attrs = @highlight_off[@buffer.point])
             @window.attroff(attrs)
           end
-          if attrs = @highlight_on[@buffer.point]
+          if (attrs = @highlight_on[@buffer.point])
             @window.attron(attrs)
           end
           c = @buffer.char_after
@@ -517,6 +545,9 @@ module ReFrame
           @window.addstr(c)
           break if newx == columns && cury == lines - 2
           @buffer.forward_char
+        end # while
+        if (attrs = @highlight_off[@buffer.point])
+          @window.attroff(attrs)
         end
         if current? && @buffer.visible_mark
           @window.attroff(Curses::A_REVERSE)
@@ -839,24 +870,55 @@ module ReFrame
     end
   end
 
-  class EchoArea < Window
+	class SpecialWindow < Window
+    attr_writer :active
+
+		def initialize(*args)
+			super
+      @active = false
+		end
+
+    def active?
+      @active
+    end
+
+    def special?
+      true
+    end
+
+    def redraw
+      @window.redraw
+    end
+
+		protected
+
+    def initialize_window(num_lines, num_columns, y, x)
+      @window = Curses::Window.new(num_lines, num_columns, y, x)
+    end
+	end
+
+	class Separator < SpecialWindow
+    def initialize(*args)
+      super
+    end
+
+		def redisplay
+      # return if @buffer.nil?
+			@window.erase
+			@window.setpos(0, 0)
+			@window.addstr('|' * Window.lines )
+			@window.noutrefresh
+		end
+	end
+
+  class EchoArea < SpecialWindow
     attr_reader :message
     attr_accessor :prompt
-    attr_writer :active
 
     def initialize(*args)
       super
       @message = nil
       @prompt = ""
-      @active = false
-    end
-
-    def echo_area?
-      true
-    end
-
-    def active?
-      @active
     end
 
     def clear
@@ -914,10 +976,6 @@ module ReFrame
       end
     end
 
-    def redraw
-      @window.redraw
-    end
-
     def move(y, x)
       @y = y
       @x = x
@@ -931,10 +989,6 @@ module ReFrame
     end
 
     private
-
-    def initialize_window(num_lines, num_columns, y, x)
-      @window = Curses::Window.new(num_lines, num_columns, y, x)
-    end
 
     def escape(s)
       super(s).gsub(/\t/, "^I")

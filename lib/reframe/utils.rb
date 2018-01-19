@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
-require "rbconfig"
+require 'rbconfig'
 
 module ReFrame
+  #
   module Utils
     module_function
 
     def message(msg, log: true, sit_for: nil, sleep_for: nil)
       str = msg.to_s
-      if log && Buffer.current&.name != "*Messages*"
-        buffer = Buffer["*Messages*"] ||
-          Buffer.new_buffer("*Messages*", undo_limit: 0).tap { |b|
+      if log && Buffer.current&.name != '*Messages*'
+        buffer = Buffer['*Messages*'] ||
+          Buffer.new_buffer('*Messages*', undo_limit: 0).tap { |b|
             b[:top_of_window] = b.new_mark
-        }
+          }
         buffer.read_only = false
         begin
           buffer.end_of_buffer
@@ -68,12 +69,10 @@ module ReFrame
     def next_tick!
       q = Queue.new
       next_tick do
-        begin
-          result = yield
-          q.push([:ok, result])
-        rescue Exception => e
-          q.push([:error, e])
-        end
+        result = yield
+        q.push([:ok, result])
+      rescue Exception => e
+        q.push([:error, e])
       end
       status, value = q.pop
       if status == :error
@@ -103,9 +102,9 @@ module ReFrame
       if e.is_a?(SystemExit)
         raise
       end
-      if Buffer.current&.name != "*Backtrace*"
-        buffer = Buffer.find_or_new("*Backtrace*", undo_limit: 0)
-        if !buffer.mode.is_a?(BacktraceMode)
+      if Buffer.current&.name != '*Backtrace*'
+        buffer = Buffer.find_or_new('*Backtrace*', undo_limit: 0)
+        unless buffer.mode.is_a?(BacktraceMode)
           buffer.apply_mode(BacktraceMode)
         end
         buffer.read_only = false
@@ -122,7 +121,7 @@ module ReFrame
           buffer.read_only = true
         end
       end
-      message(e.to_s.chomp+" "+e.backtrace[0])
+      message('#<' + e.class.to_s + '> ' + e.to_s.chomp + ' ' + e.backtrace[0]) # TODO: color
       Window.beep
     end
 
@@ -185,10 +184,10 @@ module ReFrame
 
     def read_file_name(prompt, default: nil)
       f = ->(s) {
-        s = File.expand_path(s) if s.start_with?("~")
-        Dir.glob(s + "*").map { |file|
+        s = File.expand_path(s) if s.start_with?('~')
+        Dir.glob(s + '*').map { |file|
           if File.directory?(file) && !file.end_with?(?/)
-            file + "/"
+            file + '/'
           else
             file
           end
@@ -210,7 +209,7 @@ module ReFrame
 
     def read_command_name(prompt)
       f = ->(s) {
-        complete_for_minibuffer(s.tr("-", "_"), Commands.list.map(&:to_s))
+        complete_for_minibuffer(s.tr('-', '_'), Commands.list.map(&:to_s))
       }
       read_from_minibuffer(prompt, completion_proc: f)
     end
@@ -224,14 +223,14 @@ module ReFrame
 
     def yes_or_no?(prompt)
       loop {
-        s = read_from_minibuffer(prompt + " (yes or no) ")
+        s = read_from_minibuffer(prompt + ' (yes or no) ')
         case s
-        when "yes"
+        when 'yes'
           return true
-        when "no"
+        when 'no'
           return false
         else
-          message("Please answer yes or no.", sit_for: 2)
+          message('Please answer yes or no.', sit_for: 2)
         end
       }
     end
@@ -261,7 +260,7 @@ module ReFrame
           break false
         else
           unless prompt_modified
-            new_prompt.prepend("Answer y or n. ")
+            new_prompt.prepend('Answer y or n. ')
             prompt_modified = true
           end
         end
@@ -276,7 +275,7 @@ module ReFrame
       map.define_key(?\C-g, :abort_recursive_edit)
       char_options = chars.join(?/)
       map.handle_undefined_key do |key|
-        -> { message("Invalid key.  Type C-g to quit.", sit_for: 2) }
+        -> { message('Invalid key. Type C-g to quit.', sit_for: 2) }
       end
       read_from_minibuffer(prompt + " (#{char_options}) ", keymap: map)
     end
@@ -291,7 +290,7 @@ module ReFrame
           key_sequence.push(key)
           cmd = buffer.keymap&.lookup(key_sequence) ||
             GLOBAL_MAP.lookup(key_sequence)
-          if !cmd.is_a?(Keymap)
+          unless cmd.is_a?(Keymap)
             exit_recursive_edit
           end
           Buffer.current.clear
@@ -300,8 +299,7 @@ module ReFrame
         }
       end
       read_from_minibuffer(prompt, keymap: map)
-      if buffer.keymap&.lookup(key_sequence) ||
-          GLOBAL_MAP.lookup(key_sequence)
+      if buffer.keymap&.lookup(key_sequence) || GLOBAL_MAP.lookup(key_sequence)
         key_sequence
       else
         keys = Keymap.key_sequence_string(key_sequence)
@@ -321,28 +319,26 @@ module ReFrame
 
     def run_hooks(name, remove_on_error: false)
       HOOKS[name].delete_if do |func|
-        begin
-          case func
-          when Symbol
-            send(func)
-          else
-            func.call
-          end
-          false
-        rescue Exception => e
-          raise if e.is_a?(SystemExit)
-          if remove_on_error
-            true
-          else
-            raise
-          end
+        case func
+        when Symbol
+          send(func)
+        else
+          func.call
+        end
+        false
+      rescue Exception => e
+        raise if e.is_a?(SystemExit)
+        if remove_on_error
+          true
+        else
+          raise
         end
       end
     end
 
     def set_transient_map(map)
       old_overriding_map = Controller.current.overriding_map
-      hook = -> {
+      hook = lambda {
         Controller.current.overriding_map = old_overriding_map
         remove_hook(:pre_command_hook, hook)
       }
@@ -351,16 +347,16 @@ module ReFrame
     end
 
     def ruby_install_name
-      RbConfig::CONFIG["ruby_install_name"]
+      RbConfig::CONFIG['ruby_install_name']
     end
 
-    [
-      :beginning_of_buffer?,
-      :end_of_buffer?,
-      :beginning_of_line?,
-      :end_of_line?,
-      :insert,
-      :gsub
+    %I[
+      beginning_of_buffer?
+      end_of_buffer?
+      beginning_of_line?
+      end_of_line?
+      insert
+      gsub
     ].each do |name|
       define_method(name) do |*args, &block|
         Buffer.current.send(name, *args, &block)

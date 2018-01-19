@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "open3"
-require "io/wait"
+require 'open3'
+require 'io/wait'
 
 module ReFrame
   Command = Struct.new(:name, :block, :doc)
@@ -23,7 +23,7 @@ module ReFrame
       @command_table[name.intern]
     end
 
-    def define_command(name, doc: "No documentation", &block)
+    def define_command(name, doc: 'No documentation', &block)
       name = name.intern
       Commands.send(:define_method, name, &block)
       Commands.send(:module_function, name)
@@ -34,10 +34,9 @@ module ReFrame
 
     def undefine_command(name)
       name = name.intern
-      if Commands.command_table.key?(name)
-        Commands.send(:undef_method, name)
-        Commands.command_table.delete(name)
-      end
+      return unless Commands.command_table.key?(name)
+      Commands.send(:undef_method, name)
+      Commands.command_table.delete(name)
     end
     module_function :undefine_command
   end

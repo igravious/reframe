@@ -12,7 +12,7 @@ module ReFrame
 
   class Quit < EditorError
     def initialize
-      super("Quit")
+      super('Quit')
     end
   end
 end

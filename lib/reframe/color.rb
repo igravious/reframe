@@ -1,35 +1,34 @@
 # frozen_string_literal: true
 
-require "curses"
+require 'curses'
 
 module ReFrame
   module Color
     BASIC_COLORS = {
-      "default" => -1,
-      "black" => Curses::COLOR_BLACK,
-      "red" => Curses::COLOR_RED,
-      "green" => Curses::COLOR_GREEN,
-      "yellow" => Curses::COLOR_YELLOW,
-      "blue" => Curses::COLOR_BLUE,
-      "magenta" => Curses::COLOR_MAGENTA,
-      "cyan" => Curses::COLOR_CYAN,
-      "white" => Curses::COLOR_WHITE,
-      "brightblack" => 8,
-      "brightred" => 9,
-      "brightgreen" => 10,
-      "brightyellow" => 11,
-      "brightblue" => 12,
-      "brightmagenta" => 13,
-      "brightcyan" => 14,
-      "brightwhite" => 15
+      'default' => -1,
+      'black' => Curses::COLOR_BLACK,
+      'red' => Curses::COLOR_RED,
+      'green' => Curses::COLOR_GREEN,
+      'yellow' => Curses::COLOR_YELLOW,
+      'blue' => Curses::COLOR_BLUE,
+      'magenta' => Curses::COLOR_MAGENTA,
+      'cyan' => Curses::COLOR_CYAN,
+      'white' => Curses::COLOR_WHITE,
+      'brightblack' => 8,
+      'brightred' => 9,
+      'brightgreen' => 10,
+      'brightyellow' => 11,
+      'brightblue' => 12,
+      'brightmagenta' => 13,
+      'brightcyan' => 14,
+      'brightwhite' => 15
     }
 
     RGBColor = Struct.new(:r, :g, :b, :number)
 
     ADDITIONAL_COLORS = []
     rgb_values = [0, 0x5F, 0x87, 0xAF, 0xD7, 0xFF]
-    rgb_values.product(rgb_values, rgb_values).each_with_index do
-      |(r, g, b), i|
+    rgb_values.product(rgb_values, rgb_values).each_with_index do |(r, g, b), i|
       ADDITIONAL_COLORS << RGBColor.new(r, g, b, 16 + i)
     end
     [
@@ -49,17 +48,15 @@ module ReFrame
     end
 
     def self.find_color_number(name)
-      if name.is_a?(Integer)
-        return name
-      end
+      return name if name.is_a?(Integer)
       case name
       when /\A\#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})\z/
         r = $1.to_i(16)
         g = $2.to_i(16)
         b = $3.to_i(16)
-        ADDITIONAL_COLORS.sort_by { |c|
-          (r - c.r) ** 2 + (g - c.g) ** 2 + (b - c.b) ** 2
-        }.first.number
+        ADDITIONAL_COLORS.sort_by do |c|
+          (r - c.r)**2 + (g - c.g)**2 + (b - c.b)**2
+        end.first.number
       else
         unless BASIC_COLORS.key?(name)
           raise EditorError, "No such color: #{name}"

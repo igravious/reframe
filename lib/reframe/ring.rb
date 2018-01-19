@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ReFrame
+  #
   class Ring
     include Enumerable
 
@@ -21,9 +22,7 @@ module ReFrame
       if @ring.size < @max
         @ring.insert(@current, obj)
       else
-        if @current == @max
-          @current = 0
-        end
+        @current = 0 if @current == @max
         @on_delete.call(@ring[@current])
         @ring[@current] = obj
       end
@@ -36,9 +35,7 @@ module ReFrame
     end
 
     def current
-      if @ring.empty?
-        raise EditorError, "Ring is empty"
-      end
+      raise EditorError, 'Ring is empty' if @ring.empty?
       @ring[@current]
     end
 
@@ -70,11 +67,9 @@ module ReFrame
     private
 
     def get_index(n)
-      if @ring.empty?
-        raise EditorError, "Ring is empty"
-      end
+      raise EditorError, 'Ring is empty' if @ring.empty?
       i = @current - n
-      if 0 <= i && i < @ring.size
+      if i >= 0 && i < @ring.size
         i
       else
         i % @ring.size
