@@ -1,5 +1,6 @@
 /.bundle/
 /.yardoc
+/.vscode
 /Gemfile.lock
 /_yardoc/
 /coverage/
@@ -9,3 +10,5 @@
 /tmp/
 /tags
 /vendor
+/bin/rake
+/bin/rougify
