@@ -54,13 +54,13 @@ module ReFrame
 
     def self.inherited(child)
       base_name = child.name.slice(/[^:]*\z/)
-      child.mode_name = base_name.sub(/Mode\z/, "")
+      child.mode_name = base_name.sub(/Mode\z/, '')
       command_name = base_name.sub(/\A[A-Z]/) { |s| s.downcase }.
         gsub(/(?<=[a-z])([A-Z])/) {
-          "_" + $1.downcase
+          '_' + $1.downcase
         }
       command = command_name.intern
-      hook = (command_name + "_hook").intern
+      hook = (command_name + '_hook').intern
       child.command_name = command
       child.hook_name = hook
       define_command(command) do
