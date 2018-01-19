@@ -3,71 +3,70 @@
 module ReFrame
   module Commands
     define_command(:forward_char,
-                   doc: "Move point n characters forward.") do
+                   doc: 'Move point n characters forward.') do
       |n = number_prefix_arg|
       Buffer.current.forward_char(n)
     end
-    
+
     define_command(:backward_char,
-                   doc: "Move point n characters backward.") do
+                   doc: 'Move point n characters backward.') do
       |n = number_prefix_arg|
       Buffer.current.backward_char(n)
     end
 
     define_command(:forward_word,
-                   doc: "Move point n words forward.") do
+                   doc: 'Move point n words forward.') do
       |n = number_prefix_arg|
       Buffer.current.forward_word(n)
     end
 
     define_command(:backward_word,
-                   doc: "Move point n words backward.") do
+                   doc: 'Move point n words backward.') do
       |n = number_prefix_arg|
       Buffer.current.backward_word(n)
     end
-    
 
     define_command(:next_line,
-                   doc: "Move point n lines forward.") do
+                   doc: 'Move point n lines forward.') do
       |n = number_prefix_arg|
       Buffer.current.next_line(n)
     end
-    
+
     define_command(:previous_line,
-                   doc: "Move point n lines backward.") do
+                   doc: 'Move point n lines backward.') do
       |n = number_prefix_arg|
       Buffer.current.previous_line(n)
     end
-    
+
     define_command(:delete_char,
-                   doc: "Delete n characters forward.") do
+                   doc: 'Delete n characters forward.') do
       |n = number_prefix_arg|
       Buffer.current.delete_char(n)
     end
-    
+
     define_command(:backward_delete_char,
-                   doc: "Delete n characters backward.") do
+                   doc: 'Delete n characters backward.') do
       |n = number_prefix_arg|
       Buffer.current.backward_delete_char(n)
     end
 
     define_command(:beginning_of_line,
-                   doc: "Move point to the beginning of the current line.") do
+                   doc: 'Move point to the beginning of the current line.') do
       Buffer.current.beginning_of_line
     end
 
     define_command(:end_of_line,
-                   doc: "Move point to the end of the current line.") do
+                   doc: 'Move point to the end of the current line.') do
       Buffer.current.end_of_line
     end
 
     define_command(:beginning_of_buffer,
-                   doc: "Move point to the beginning of the buffer.") do
+                   doc: 'Move point to the beginning of the buffer.') do
       Buffer.current.beginning_of_buffer
     end
 
     define_command(:end_of_buffer,
-                   doc: "Move point to the end of the buffer.") do
+                   doc: 'Move point to the end of the buffer.') do
       Buffer.current.end_of_buffer
     end
 
@@ -82,7 +81,7 @@ module ReFrame
     end
 
     define_command(:pop_mark,
-                   doc: "Pop the mark from the mark ring.") do
+                   doc: 'Pop the mark from the mark ring.') do
       Buffer.current.pop_mark
     end
 
@@ -95,32 +94,32 @@ module ReFrame
     end
 
     define_command(:exchange_point_and_mark,
-                   doc: "Exchange the positions of point and mark.") do
+                   doc: 'Exchange the positions of point and mark.') do
       Buffer.current.exchange_point_and_mark
     end
 
     define_command(:copy_region,
-                   doc: "Copy the region to the kill ring.") do
+                   doc: 'Copy the region to the kill ring.') do
       Buffer.current.copy_region
     end
 
     define_command(:kill_region,
-                   doc: "Copy and delete the region.") do
+                   doc: 'Copy and delete the region.') do
       Buffer.current.kill_region
     end
 
     define_command(:yank,
-                   doc: "Insert the last text copied in the kill ring.") do
+                   doc: 'Insert the last text copied in the kill ring.') do
       Buffer.current.yank
     end
 
     define_command(:newline,
-                   doc: "Insert a newline.") do
+                   doc: 'Insert a newline.') do
       Buffer.current.newline
     end
 
     define_command(:open_line,
-                   doc: "Insert a newline leaving point before it.") do
+                   doc: 'Insert a newline leaving point before it.') do
       buffer = Buffer.current
       buffer.save_excursion do
         buffer.newline
@@ -128,12 +127,12 @@ module ReFrame
     end
 
     define_command(:delete_region,
-                   doc: "Delete the region without copying.") do
+                   doc: 'Delete the region without copying.') do
       Buffer.current.delete_region
     end
 
     define_command(:transpose_chars,
-                   doc: "Transpose characters.") do
+                   doc: 'Transpose characters.') do
       Buffer.current.transpose_chars
     end
 
@@ -150,26 +149,26 @@ module ReFrame
         buffer.pop_to_mark
       else
         buffer.push_mark
-        message("Mark set")
+        message('Mark set')
       end
     end
 
     define_command(:goto_char,
-                   doc: "Move point to pos.") do
-      |pos = read_from_minibuffer("Go to char: ")|
+                   doc: 'Move point to pos.') do
+      |pos = read_from_minibuffer('Go to char: ')|
       Buffer.current.goto_char(pos.to_i)
       Window.current.recenter_if_needed
     end
 
     define_command(:goto_line,
-                   doc: "Move point to line n.") do
-      |n = read_from_minibuffer("Go to line: ")|
+                   doc: 'Move point to line n.') do
+      |n = read_from_minibuffer('Go to line: ')|
       Buffer.current.goto_line(n.to_i)
       Window.current.recenter_if_needed
     end
 
     define_command(:self_insert,
-                   doc: "Insert the character typed.") do
+                   doc: 'Insert the character typed.') do
       |n = number_prefix_arg|
       c = Controller.current.last_key
       merge_undo = Controller.current.last_command == :self_insert
@@ -177,23 +176,21 @@ module ReFrame
     end
 
     define_command(:quoted_insert,
-                   doc: "Read a character, and insert it.") do
+                   doc: 'Read a character, and insert it.') do
       |n = number_prefix_arg|
       c = Controller.current.read_event
-      if !c.is_a?(String)
-        raise EditorError, "Invalid key"
-      end
+      raise EditorError, 'Invalid key' unless c.is_a?(String)
       Buffer.current.insert(c * n)
     end
 
     define_command(:kill_line,
-                   doc: "Kill the rest of the current line.") do
+                   doc: 'Kill the rest of the current line.') do
       Buffer.current.kill_line(Controller.current.last_command == :kill_region)
       Controller.current.this_command = :kill_region
     end
 
     define_command(:kill_word,
-                   doc: "Kill a word.") do
+                   doc: 'Kill a word.') do
       Buffer.current.kill_word(Controller.current.last_command == :kill_region)
       Controller.current.this_command = :kill_region
     end
@@ -203,31 +200,29 @@ module ReFrame
         Rotate the kill ring, and replace the yanked text.
       EOD
       if Controller.current.last_command != :yank
-        raise EditorError, "Previous command was not a yank"
+        raise EditorError, 'Previous command was not a yank'
       end
       Buffer.current.yank_pop
       Controller.current.this_command = :yank
     end
 
     define_command(:undo,
-                   doc: "Undo changes.") do
+                   doc: 'Undo changes.') do
       Buffer.current.undo
-      message("Undo!") unless Window.echo_area.current?
+      message('Undo!') unless Window.echo_area.current?
     end
 
     define_command(:redo_command,
-                   doc: "Redo changes reverted by undo.") do
+                   doc: 'Redo changes reverted by undo.') do
       Buffer.current.redo
-      message("Redo!") unless Window.echo_area.current?
+      message('Redo!') unless Window.echo_area.current?
     end
 
     define_command(:back_to_indentation,
-                   doc: "Move point to the first non-space character.") do
+                   doc: 'Move point to the first non-space character.') do
       buffer = Buffer.current
       buffer.beginning_of_line
-      while /[ \t]/ =~ buffer.char_after
-        buffer.forward_char
-      end
+      buffer.forward_char while /[ \t]/ =~ buffer.char_after
     end
 
     define_command(:delete_indentation,
@@ -242,7 +237,7 @@ module ReFrame
       buffer.backward_char
       buffer.skip_re_backward(/[ \t]/)
       buffer.delete_region(buffer.point, pos)
-      buffer.insert(" ")
+      buffer.insert(' ')
       buffer.backward_char
     end
   end

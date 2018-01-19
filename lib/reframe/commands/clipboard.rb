@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+#
 module Clipboard
   @implementation = nil
 end
@@ -7,10 +8,11 @@ end
 require "clipboard"
 
 module ReFrame
+  #
   module Commands
     CLIPBOARD_AVAILABLE =
-      Clipboard.implementation.name != "Clipboard::Linux" ||
-      (ENV["DISPLAY"] && system("which xclip > /dev/null 2>&1"))
+      Clipboard.implementation.name != 'Clipboard::Linux' ||
+      (ENV['DISPLAY'] && system('which xclip > /dev/null 2>&1'))
 
     if CLIPBOARD_AVAILABLE
       GLOBAL_MAP.define_key("\ew", :clipboard_copy_region)

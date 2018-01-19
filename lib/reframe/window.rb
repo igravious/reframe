@@ -4,6 +4,7 @@ require 'curses'
 require 'unicode/display_width'
 
 module ReFrame
+  #
   class Window
     KEY_NAMES = {}
     Curses.constants.grep(/\AKEY_/).each do |name|
@@ -16,7 +17,7 @@ module ReFrame
       ALT_NUMBER_BASE = Curses::ALT_0 - ?0.ord
       ALT_ALPHA_BASE = Curses::ALT_A - ?a.ord
     end
-  
+
     EXTENT = 80 # the sacred 80
 
     @@started = false
@@ -29,9 +30,9 @@ module ReFrame
     @@separator = EXTENT + 1 # makes sense
 
     @@has_colors = false
-    require "rouge" # gets called before any mode
-    #@@opts = {:theme=>"thankful_eyes", :css_class=>"codehilite"} # TODO, don't need to do this, this is the default
-    #@@theme = ::Rouge::Theme.find(@@opts[:theme]).new or raise "unknown theme #{@@opts[:theme]}"
+    require 'rouge' # gets called before any mode
+    # @@opts = {:theme=>"thankful_eyes", :css_class=>"codehilite"} # TODO, don't need to do this, this is the default
+    # @@theme = ::Rouge::Theme.find(@@opts[:theme]).new or raise "unknown theme #{@@opts[:theme]}"
     @@formatter = ::Rouge::Formatters::Buffer256.new()
 
     def self.theme
@@ -72,7 +73,7 @@ module ReFrame
         raise EditorError, "Can't delete the sole window"
       end
       i = @@list.index(@@current)
-      if i == 0
+      if i.zero?
         window = @@list[1]
         window.move(0, 0)
       else
@@ -114,9 +115,9 @@ module ReFrame
       @@echo_area
     end
 
-		def self.property_pane
-			@@properties
-		end
+    def self.property_pane
+      @@properties
+    end
 
     def self.has_colors=(value)
       @@has_colors = value
@@ -136,30 +137,30 @@ module ReFrame
     end
 
     def self.load_faces
-			require_relative "faces/basic"
-			require_relative "faces/programming"
+      require_relative 'faces/basic'
+      require_relative 'faces/programming'
     end
 
-		def self.curses_init
+    def self.curses_init
       Curses.init_screen
       Curses.noecho
       Curses.raw
       Curses.nonl
-		end
+    end
 
-		def self.restart
+    def self.restart
       if @@started
-        raise EditorError, "Already started"
+        raise EditorError, 'Already started'
       end
-			curses_init
-			redraw
-		end
+      curses_init
+      redraw
+    end
 
     def self.start
       if @@started
-        raise EditorError, "Already started"
+        raise EditorError, 'Already started'
       end
-			curses_init
+      curses_init
       self.has_colors = Curses.has_colors?
       if has_colors?
         Curses.start_color
@@ -167,22 +168,22 @@ module ReFrame
         load_faces
       end
       begin
-				# has a mode (context line) – h,w,y,x – leave room for echo area
+        # has a mode (context line) – h,w,y,x – leave room for echo area
         window = ReFrame::Window.new(Window.lines - 1, Window.separator - 1, 0, 0)
-        window.buffer = Buffer.new_buffer("*scratch*")
+        window.buffer = Buffer.new_buffer('*scratch*')
         @@list.push(window)
         Window.current = window
 
-				# does this really need to be a class var?
-				separator = ReFrame::Separator.new(Window.lines - 1, 1, 0, Window.separator - 1)
-				Buffer.nullbuffer.keymap = nil
-				separator.buffer = Buffer.nullbuffer
+        # does this really need to be a class var?
+        separator = ReFrame::Separator.new(Window.lines - 1, 1, 0, Window.separator - 1)
+        Buffer.nullbuffer.keymap = nil
+        separator.buffer = Buffer.nullbuffer
         @@list.push(separator)
 
-				# has a mode 
-				@@property_pane = ReFrame::Window.new(Window.lines - 1, Window.columns - Window.separator, 0, Window.separator)
-				Buffer.propbuffer.keymap = PROPBUFFER_LOCAL_MAP
-				@@property_pane.buffer = Buffer.propbuffer
+        # has a mode
+        @@property_pane = ReFrame::Window.new(Window.lines - 1, Window.columns - Window.separator, 0, Window.separator)
+        Buffer.propbuffer.keymap = PROPBUFFER_LOCAL_MAP
+        @@property_pane.buffer = Buffer.propbuffer
         @@list.push(@@property_pane)
 
         @@echo_area = ReFrame::EchoArea.new(1, Window.columns, Window.lines - 1, 0)
@@ -193,21 +194,21 @@ module ReFrame
         @@started = true
         yield
       ensure
-				@@list.each do |win|
-					win.close
-				end
+        @@list.each do |win|
+          win.close
+        end
         @@list.clear
-				curses_suspend
+        curses_suspend
       end
     end
 
-		def self.curses_suspend
-			Curses.echo
-			Curses.noraw
-			Curses.nl
-			Curses.close_screen
+    def self.curses_suspend
+      Curses.echo
+      Curses.noraw
+      Curses.nl
+      Curses.close_screen
       @@started = false
-		end
+    end
 
     def self.redisplay
       return if Controller.current.executing_keyboard_macro?
@@ -407,12 +408,12 @@ module ReFrame
       end
     end
 
-		def rouge_highlight
+    def rouge_highlight
       @highlight_on = {}
       @highlight_off = {}
       return if !@@has_colors || !CONFIG[:syntax_highlight] || @buffer.binary?
-			# make some nice lexed source
-			source = if @buffer.bytesize < CONFIG[:highlight_buffer_size_limit]
+      # make some nice lexed source
+      source = if @buffer.bytesize < CONFIG[:highlight_buffer_size_limit]
         base_pos = @buffer.point_min
         @buffer.to_s
       else
@@ -420,20 +421,20 @@ module ReFrame
         len = columns * (lines - 1) / 2 * 3
         @buffer.substring(@buffer.point, @buffer.point + len).scrub("")
       end
-			lexer = @buffer.mode.class.lexer
-			ReFrame::Window.formatter.format(lexer.lex(source)) do |style_attrs, val_str, reset_attrs|
-				b = base_pos
-				e = b + val_str.bytesize 
+      lexer = @buffer.mode.class.lexer
+      ReFrame::Window.formatter.format(lexer.lex(source)) do |style_attrs, val_str, reset_attrs|
+        b = base_pos
+        e = b + val_str.bytesize
         if b < @buffer.point && @buffer.point < e
           b = @buffer.point
         end
-				if style_attrs # and (val_str =~ /^[[:space:]]+/).nil?
-					@highlight_on[b] = style_attrs
-					@highlight_off[e] = style_attrs
-				end
-				base_pos = e
-			end
-		end
+        if style_attrs # and (val_str =~ /^[[:space:]]+/).nil?
+          @highlight_on[b] = style_attrs
+          @highlight_off[e] = style_attrs
+        end
+        base_pos = e
+      end
+    end
 
     def highlight
       @highlight_on = {}
@@ -450,7 +451,7 @@ module ReFrame
       end
       re_str = syntax_table.map { |name, re|
         "(?<#{name}>#{re})"
-      }.join("|")
+      }.join('|')
       re = Regexp.new(re_str)
       names = syntax_table.keys
       s.scan(re) do
@@ -490,7 +491,7 @@ module ReFrame
            @buffer.point_after_mark?(@buffer.visible_mark)
           @window.attron(Curses::A_REVERSE)
         end
-        while !@buffer.end_of_buffer?
+        until @buffer.end_of_buffer?
           cury, curx = @window.cury, @window.curx
           if @buffer.point_at_mark?(point)
             y, x = cury, curx
@@ -519,13 +520,13 @@ module ReFrame
           c = @buffer.char_after
           if c == "\n"
             @window.clrtoeol
-            break if cury == lines - 2   # lines include mode line
+            break if cury == lines - 2 # lines include mode line
             @window.setpos(cury + 1, 0)
             @buffer.forward_char
             next
           elsif c == "\t"
             n = calc_tab_width(curx)
-            c = " " * n
+            c = ' ' * n
           else
             c = escape(c)
           end
@@ -567,7 +568,7 @@ module ReFrame
         @window.noutrefresh
       end
     end
-    
+
     def redraw
       @window.redraw
       @mode_line.redraw
@@ -593,7 +594,7 @@ module ReFrame
         max = (lines - 1) / 2
         count = beginning_of_line_and_count(max)
         while count < max
-          break if @buffer.point == 0
+          break if @buffer.point.zero?
           @buffer.backward_char
           count += beginning_of_line_and_count(max - count - 1) + 1
         end
@@ -610,7 +611,7 @@ module ReFrame
 
     def scroll_up
       if @bottom_of_window.location == @buffer.point_max
-        raise RangeError, "End of buffer"
+        raise RangeError, 'End of buffer'
       end
       @buffer.point_to_mark(@bottom_of_window)
       @buffer.previous_line
@@ -620,7 +621,7 @@ module ReFrame
 
     def scroll_down
       if @top_of_window.location == @buffer.point_min
-        raise RangeError, "Beginning of buffer"
+        raise RangeError, 'Beginning of buffer'
       end
       @buffer.point_to_mark(@top_of_window)
       @buffer.next_line
@@ -632,7 +633,7 @@ module ReFrame
       old_lines = lines
       new_lines = (old_lines / 2.0).ceil
       if new_lines < CONFIG[:window_min_height]
-        raise EditorError, "Window too small"
+        raise EditorError, 'Window too small'
       end
       resize(new_lines, columns)
       new_window = Window.new(old_lines - new_lines, columns, y + new_lines, x)
@@ -642,7 +643,7 @@ module ReFrame
     end
 
     def enlarge(n)
-      if n > 0
+      if n.positive?
         max_height = Window.lines -
           CONFIG[:window_min_height] * (@@list.size - 2) - 1
         new_lines = [lines + n, max_height].min
@@ -666,7 +667,7 @@ module ReFrame
           win.move(y, win.x)
           y += win.lines
         end
-      elsif n < 0 && @@list.size > 2
+      elsif n.negative? && @@list.size > 2
         new_lines = [lines + n, CONFIG[:window_min_height]].max
         diff = lines - new_lines
         resize(new_lines, columns)
@@ -691,7 +692,7 @@ module ReFrame
         @buffer.end_of_buffer
         @buffer.skip_re_backward(/\s/)
         count = beginning_of_line_and_count(Window.lines) + 1
-        while !@buffer.beginning_of_buffer?
+        until @buffer.beginning_of_buffer?
           @buffer.backward_char
           count += beginning_of_line_and_count(Window.lines) + 1
         end
@@ -710,7 +711,7 @@ module ReFrame
 
     def framer
       @buffer.save_point do |saved|
-        max = lines - 1   # lines include mode line
+        max = lines - 1 # lines include mode line
         count = beginning_of_line_and_count(max)
         new_start_loc = @buffer.point
         if @buffer.point_before_mark?(@top_of_window)
@@ -719,12 +720,12 @@ module ReFrame
         end
         while count < max
           break if @buffer.point_at_mark?(@top_of_window)
-          break if @buffer.point == 0
+          break if @buffer.point.zero?
           new_start_loc = @buffer.point
           @buffer.backward_char
           count += beginning_of_line_and_count(max - count - 1) + 1
         end
-        if count >= lines - 1     # lines include mode line
+        if count >= lines - 1 # lines include mode line
           @top_of_window.location = new_start_loc
         end
       end
@@ -736,8 +737,8 @@ module ReFrame
       attrs = @@has_colors ? Face[:mode_line].attributes : Curses::A_REVERSE
       @mode_line.attrset(attrs)
       @mode_line.addstr("#{@buffer.name} ")
-      @mode_line.addstr("[+]") if @buffer.modified?
-      @mode_line.addstr("[RO]") if @buffer.read_only?
+      @mode_line.addstr('[+]') if @buffer.modified?
+      @mode_line.addstr('[RO]') if @buffer.read_only?
       @mode_line.addstr("[#{@buffer.file_encoding.name}/")
       @mode_line.addstr("#{@buffer.file_format}] ")
       if current? || @buffer.point_at_mark?(@point_mark)
@@ -751,29 +752,29 @@ module ReFrame
       @mode_line.addstr(unicode_codepoint(c))
       @mode_line.addstr(" #{line},#{column}")
       @mode_line.addstr(" (#{@buffer.mode&.name || 'None'})")
-      @mode_line.addstr(" " * (columns - @mode_line.curx))
+      @mode_line.addstr(' ' * (columns - @mode_line.curx))
       @mode_line.attrset(0)
       @mode_line.noutrefresh
     end
 
     def unicode_codepoint(c)
       if c.nil?
-        "<EOF>"
+        '<EOF>'
       else
-        "U+%04X" % c.ord
+        'U+%04X' % c.ord
       end
     end
 
     def escape(s)
       if @buffer.binary?
         s.gsub(/[\0-\b\v-\x1f\x7f]/) { |c|
-          "^" + (c.ord ^ 0x40).chr
+          '^' + (c.ord ^ 0x40).chr
         }.gsub(/[\x80-\xff]/n) { |c|
-          "<%02X>" % c.ord
+          '<%02X>' % c.ord
         }
       else
         s.gsub(/[\0-\b\v-\x1f\x7f]/) { |c|
-          "^" + (c.ord ^ 0x40).chr
+          '^' + (c.ord ^ 0x40).chr
         }
       end
     end
@@ -793,7 +794,7 @@ module ReFrame
         c = @buffer.char_after
         if c == ?\t
           n = calc_tab_width(column)
-          str = " " * n
+          str = ' ' * n
         else
           str = escape(c)
         end
@@ -870,13 +871,14 @@ module ReFrame
     end
   end
 
-	class SpecialWindow < Window
+  #
+  class SpecialWindow < Window
     attr_writer :active
 
-		def initialize(*args)
-			super
+    def initialize(*args)
+      super
       @active = false
-		end
+    end
 
     def active?
       @active
@@ -890,27 +892,29 @@ module ReFrame
       @window.redraw
     end
 
-		protected
+    protected
 
     def initialize_window(num_lines, num_columns, y, x)
       @window = Curses::Window.new(num_lines, num_columns, y, x)
     end
-	end
+  end
 
-	class Separator < SpecialWindow
+  #
+  class Separator < SpecialWindow
     def initialize(*args)
       super
     end
 
-		def redisplay
+    def redisplay
       # return if @buffer.nil?
-			@window.erase
-			@window.setpos(0, 0)
-			@window.addstr('|' * Window.lines )
-			@window.noutrefresh
-		end
-	end
+      @window.erase
+      @window.setpos(0, 0)
+      @window.addstr('|' * Window.lines)
+      @window.noutrefresh
+    end
+  end
 
+  #
   class EchoArea < SpecialWindow
     attr_reader :message
     attr_accessor :prompt
@@ -918,14 +922,14 @@ module ReFrame
     def initialize(*args)
       super
       @message = nil
-      @prompt = ""
+      @prompt = ''
     end
 
     def clear
       @buffer.clear
       @top_of_window.location = @buffer.point_min
       @message = nil
-      @prompt = ""
+      @prompt = ''
     end
 
     def clear_message
@@ -991,7 +995,7 @@ module ReFrame
     private
 
     def escape(s)
-      super(s).gsub(/\t/, "^I")
+      super(s).gsub(/\t/, '^I')
     end
 
     def framer

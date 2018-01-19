@@ -3,6 +3,7 @@
 require 'curses'
 
 module ReFrame
+  #
   class Face
     attr_reader :name, :attributes
 
@@ -36,7 +37,7 @@ module ReFrame
       update(**opts)
     end
 
-    def attributes
+    def the_attributes
       Curses.init_pair(@color_pair,
                        Color[@foreground], Color[@background])
       @attributes = 0
@@ -46,13 +47,13 @@ module ReFrame
       @attributes |= Curses::A_REVERSE if @reverse
     end
 
-    def update(foreground: -1, background: -1, bold: false, underline: false, rev: false)
+    def update(foreground: -1, background: -1, bold: false, underline: false, the_reverse: false)
       @foreground = foreground
       @background = background
       @bold = bold
       @underline = underline
-      @reverse = rev
-      @attributes = attributes
+      @reverse = the_reverse
+      @attributes = the_attributes
       self
     end
   end

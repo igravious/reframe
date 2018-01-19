@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ReFrame
+  #
   class Mode
     extend Commands
     include Commands
