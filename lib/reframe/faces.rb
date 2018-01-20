@@ -40,11 +40,12 @@ module ReFrame
     def the_attributes
       Curses.init_pair(@color_pair,
                        Color[@foreground], Color[@background])
-      @attributes = 0
-      @attributes |= Curses.color_pair(@color_pair)
-      @attributes |= Curses::A_BOLD if @bold
-      @attributes |= Curses::A_UNDERLINE if @underline
-      @attributes |= Curses::A_REVERSE if @reverse
+      attributes = 0
+      attributes |= Curses.color_pair(@color_pair)
+      attributes |= Curses::A_BOLD if @bold
+      attributes |= Curses::A_UNDERLINE if @underline
+      attributes |= Curses::A_REVERSE if @reverse
+			attributes
     end
 
     def update(foreground: -1, background: -1, bold: false, underline: false, the_reverse: false)

@@ -213,11 +213,11 @@ EOF
   def test_s_current
     window = Window.current
     window.split
-    assert_equal(3, Window.list(include_echo_area: true).size)
+    assert_equal(3, Window.list(include_special: true).size)
     Window.delete_window
     Window.current = window
     assert_not_equal(window, Window.current)
-    assert_equal(Window.list(include_echo_area: true).first, Window.current)
+    assert_equal(Window.list(include_special: true).first, Window.current)
   end
 
   def test_s_readraw
@@ -324,24 +324,38 @@ EOF
       assert_raise(EditorError) do
         Window.start
       end
-      windows = Window.list(include_echo_area: true)
-      assert_equal(2, windows.size)
+      windows = Window.list(include_special: true)
+      assert_equal(4, windows.size)
       assert_equal(true, windows[0].current?)
-      assert_equal(false, windows[0].echo_area?)
+      assert_equal(false, windows[0].special?)
       assert_equal("*scratch*", windows[0].buffer.name)
       assert_equal(0, windows[0].y)
       assert_equal(0, windows[0].x)
       assert_equal(23, windows[0].lines)
       assert_equal(80, windows[0].columns)
       assert_equal(false, windows[1].current?)
-      assert_equal(true, windows[1].echo_area?)
-      assert_equal(Buffer.minibuffer, windows[1].buffer)
-      assert_equal(23, windows[1].y)
-      assert_equal(0, windows[1].x)
-      assert_equal(1, windows[1].lines)
-      assert_equal(80, windows[1].columns)
+      assert_equal(true, windows[1].special?)
+      assert_equal(Buffer.nullbuffer, windows[1].buffer)
+      assert_equal(0, windows[1].y)
+      assert_equal(80, windows[1].x)
+      assert_equal(23, windows[1].lines)
+      assert_equal(1, windows[1].columns)
+      assert_equal(false, windows[2].current?)
+      assert_equal(false, windows[2].special?)
+      assert_equal(Buffer.propbuffer, windows[2].buffer)
+      assert_equal(0, windows[2].y)
+      assert_equal(81, windows[2].x)
+      assert_equal(23, windows[2].lines)
+      assert_equal(102, windows[2].columns) # -1 ???
+      assert_equal(false, windows[3].current?)
+      assert_equal(true, windows[3].special?)
+      assert_equal(Buffer.minibuffer, windows[3].buffer)
+      assert_equal(23, windows[3].y)
+      assert_equal(0, windows[3].x)
+      assert_equal(1, windows[3].lines)
+      assert_equal(80, windows[3].columns)
     end
-    assert_equal(0, Window.list(include_echo_area: true).size)
+    assert_equal(0, Window.list(include_special: true).size)
   end
 
   def test_s_set_default_colors

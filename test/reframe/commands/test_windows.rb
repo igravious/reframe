@@ -8,7 +8,7 @@ class TestWindows < ReFrame::TestCase
     Window.columns = 60
     begin
       resize_window
-      list = Window.list(include_echo_area: true)
+      list = Window.list(include_special: true)
       assert_equal(0, list[0].y)
       assert_equal(0, list[0].x)
       assert_equal(60, list[0].columns)
@@ -19,7 +19,7 @@ class TestWindows < ReFrame::TestCase
       assert_equal(1, list[1].lines)
 
       split_window
-      list = Window.list(include_echo_area: true)
+      list = Window.list(include_special: true)
       assert_equal(3, list.size)
       assert_equal(0, list[0].y)
       assert_equal(0, list[0].x)
@@ -37,7 +37,7 @@ class TestWindows < ReFrame::TestCase
       Window.lines = 24
       other_window
       resize_window
-      list = Window.list(include_echo_area: true)
+      list = Window.list(include_special: true)
       assert_equal(3, list.size)
       assert_equal(list[1], Window.current)
       assert_equal(0, list[0].y)
@@ -55,7 +55,7 @@ class TestWindows < ReFrame::TestCase
 
       Window.lines = 23
       resize_window
-      list = Window.list(include_echo_area: true)
+      list = Window.list(include_special: true)
       assert_equal(2, list.size)
       assert_equal(list[0], Window.current)
       assert_equal(0, list[0].y)
@@ -123,7 +123,7 @@ class TestWindows < ReFrame::TestCase
       delete_window
     end
     split_window
-    assert_equal(3, Window.list(include_echo_area: true).size)
+    assert_equal(3, Window.list(include_special: true).size)
     window = Window.current
     Window.current = Window.echo_area
     assert_raise(EditorError) do
@@ -132,26 +132,26 @@ class TestWindows < ReFrame::TestCase
     Window.current = window
     delete_window
     assert_equal(true, window.deleted?)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(2, list.size)
     assert_equal(0, list[0].y)
     assert_equal(23, list[0].lines)
     assert_equal(23, list[1].y)
     assert_equal(1, list[1].lines)
-    assert_equal(Window.list(include_echo_area: true)[0], Window.current)
+    assert_equal(Window.list(include_special: true)[0], Window.current)
 
     split_window
     assert_equal(2, Window.list.size)
-    window = Window.current = Window.list(include_echo_area: true)[1]
+    window = Window.current = Window.list(include_special: true)[1]
     delete_window
     assert_equal(true, window.deleted?)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(2, list.size)
     assert_equal(0, list[0].y)
     assert_equal(23, list[0].lines)
     assert_equal(23, list[1].y)
     assert_equal(1, list[1].lines)
-    assert_equal(Window.list(include_echo_area: true)[0], Window.current)
+    assert_equal(Window.list(include_special: true)[0], Window.current)
   end
 
   def test_delete_other_windows
@@ -160,38 +160,38 @@ class TestWindows < ReFrame::TestCase
       delete_other_windows
     end
 
-    window = Window.current = Window.list(include_echo_area: true)[0]
+    window = Window.current = Window.list(include_special: true)[0]
     split_window
     split_window
-    assert_equal(4, Window.list(include_echo_area: true).size)
+    assert_equal(4, Window.list(include_special: true).size)
     delete_other_windows
     assert_equal(false, window.deleted?)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(2, list.size)
     assert_equal(0, list[0].y)
     assert_equal(23, list[0].lines)
     assert_equal(23, list[1].y)
     assert_equal(1, list[1].lines)
-    assert_equal(Window.list(include_echo_area: true)[0], Window.current)
+    assert_equal(Window.list(include_special: true)[0], Window.current)
   end
 
   def test_split_window
     split_window
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(3, list.size)
     assert_equal(0, list[0].y)
     assert_equal(12, list[0].lines)
     assert_equal(true, list[0].current?)
-    assert_equal(false, list[0].echo_area?)
+    assert_equal(false, list[0].special?)
     assert_equal(12, list[1].y)
     assert_equal(11, list[1].lines)
     assert_equal(false, list[1].current?)
-    assert_equal(false, list[1].echo_area?)
+    assert_equal(false, list[1].special?)
     assert_equal(list[0].buffer, list[1].buffer)
     assert_equal(23, list[2].y)
     assert_equal(1, list[2].lines)
     assert_equal(false, list[2].current?)
-    assert_equal(true, list[2].echo_area?)
+    assert_equal(true, list[2].special?)
 
     split_window
     assert_raise(EditorError) do
@@ -236,7 +236,7 @@ class TestWindows < ReFrame::TestCase
   def test_enlarge_window
     split_window
     split_window
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(6, list[0].lines)
@@ -248,7 +248,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     enlarge_window
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(7, list[0].lines)
@@ -260,7 +260,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     enlarge_window(5)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(12, list[0].lines)
@@ -272,7 +272,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     enlarge_window(4)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(15, list[0].lines)
@@ -284,7 +284,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     enlarge_window(-5)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(10, list[0].lines)
@@ -297,7 +297,7 @@ class TestWindows < ReFrame::TestCase
 
     other_window
     enlarge_window(2)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(8, list[0].lines)
@@ -310,7 +310,7 @@ class TestWindows < ReFrame::TestCase
 
     other_window
     enlarge_window(3)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(8, list[0].lines)
@@ -322,7 +322,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     enlarge_window(-3)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(8, list[0].lines)
@@ -337,7 +337,7 @@ class TestWindows < ReFrame::TestCase
   def test_shrink_window
     split_window
     split_window
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(6, list[0].lines)
@@ -349,7 +349,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     shrink_window
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(5, list[0].lines)
@@ -361,7 +361,7 @@ class TestWindows < ReFrame::TestCase
     assert_equal(1, list[3].lines)
 
     shrink_window(-1)
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(4, list.size)
     assert_equal(0, list[0].y)
     assert_equal(6, list[0].lines)
@@ -382,7 +382,7 @@ quux
 EOF
     split_window
     shrink_window_if_larger_than_buffer
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(3, list.size)
     assert_equal(0, list[0].y)
     assert_equal(5, list[0].lines)
@@ -393,7 +393,7 @@ EOF
 
     insert("quux\n")
     shrink_window_if_larger_than_buffer
-    list = Window.list(include_echo_area: true)
+    list = Window.list(include_special: true)
     assert_equal(3, list.size)
     assert_equal(0, list[0].y)
     assert_equal(5, list[0].lines)
@@ -459,7 +459,7 @@ EOF
     kill_buffer(foo)
     assert_not_equal(foo, Buffer.current)
     assert_equal(nil, Buffer["foo"])
-    Window.list(include_echo_area: true).each do |window|
+    Window.list(include_special: true).each do |window|
       assert_not_equal(foo, window.buffer)
     end
 

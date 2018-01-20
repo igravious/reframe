@@ -1,4 +1,5 @@
-require "simplecov"
+
+require 'simplecov'
 require "test/unit"
 require "tmpdir"
 require "curses"

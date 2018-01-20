@@ -121,7 +121,8 @@ module ReFrame
           buffer.read_only = true
         end
       end
-      message('#<' + e.class.to_s + '> ' + e.to_s.chomp + ' ' + e.backtrace[0]) # TODO: color
+      # message('#<' + e.class.to_s + '> ' + e.to_s.chomp + ' ' + e.backtrace[0]) # TODO: dev mode
+      message(e.to_s.chomp) # TODO: color?
       Window.beep
     end
 

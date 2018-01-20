@@ -6,7 +6,7 @@ class TestHelp < ReFrame::TestCase
     s = Buffer.current.to_s
     assert_match(/^a +\[self_insert\]/, s)
     assert_match(/^<backspace> +\[backward_delete_char\]/, s)
-    assert_match(/^C-h +\[backward_delete_char\]/, s)
+    # assert_match(/^C-h +\[backward_delete_char\]/, s)
     assert_match(/^C-x RET f +\[set_buffer_file_encoding\]/, s)
   end
 

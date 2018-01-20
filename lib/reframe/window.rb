@@ -43,11 +43,11 @@ module ReFrame
       @@formatter
     end
 
-    def self.list(include_echo_area: false)
-      if include_echo_area
+    def self.list(include_special: false)
+      if include_special
         @@list.dup
       else
-        @@list.reject(&:echo_area?)
+        @@list.reject(&:special?)
       end
     end
 
@@ -103,11 +103,10 @@ module ReFrame
 
     def self.other_window
       i = @@list.index(@@current)
-      loop do
+			begin
         i += 1
-        window = @@list[i % @@list.size]
-        break if window.active?
-      end
+			  window = @@list[i % @@list.size]
+      end while not window.active?
       self.current = window
     end
 
