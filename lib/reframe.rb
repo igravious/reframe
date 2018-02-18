@@ -38,3 +38,17 @@ require_relative 'reframe/modes/completion_list_mode'
 require_relative 'reframe/modes/help_mode'
 require_relative 'reframe/plugin'
 require_relative 'reframe/controller'
+
+require_relative 'reframe/app'
+
+require 'active_record'
+App.init_logging()
+App.setup_database()
+App.load_models()
+
+# and/or
+
+# ContextProxy = Struct.new(:name)
+# UNTITLED_FILE=ContextProxy.new('*untitled*')
+# Context = Class.new
+

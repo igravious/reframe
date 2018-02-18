@@ -13,6 +13,23 @@ module ReFrame
     attr_reader :name, :file_name, :file_encoding, :file_format, :point, :marks
     attr_reader :current_line, :current_column, :visible_mark
 
+		# this should be opaque to buffer
+		def name
+			case @name
+			when NilClass
+				nil
+			when String
+				@name
+			when Context
+				JSON.load(@name.locator)['name']
+			when Element
+				context = Context.find(@name.frame_id)
+				JSON.load(context.locator)['name']
+			when ContextProxy
+				@name[:name]
+			end
+		end
+
     GAP_SIZE = 256
     UNDO_LIMIT = 1000
 
@@ -1302,9 +1319,9 @@ module ReFrame
     def self.dump_unsaved_buffers(dir)
       FileUtils.mkdir_p(dir)
       @@list.each do |buffer|
-        if /\A\*/ !~ buffer.name && buffer.modified?
-          buffer.dump(File.expand_path(buffer.object_id.to_s, dir))
-        end
+				if /\A\*/ !~ buffer.name && buffer.modified?
+					buffer.dump(File.expand_path(buffer.object_id.to_s, dir))
+				end
       end
     end
 

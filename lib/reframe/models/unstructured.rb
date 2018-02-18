@@ -1,0 +1,2 @@
+class Unstructured < Frame
+end

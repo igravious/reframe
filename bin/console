@@ -1,8 +1,15 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "reframe"
-require "irb"
+require 'bundler/setup'
+require 'dotenv/load'
+# Bundler.require 'dotenv/load'
+# Bundler.require(ENV['REFRAME_ENV']) if ENV['REFRAME_ENV']
+require 'active_support'
+require 'active_support/core_ext/kernel/reporting'
+require 'active_support/core_ext/string/inquiry'
+require 'reframe'
+# Bundler.require(App.env) if App.env
+require 'irb'
 
 include ReFrame
 

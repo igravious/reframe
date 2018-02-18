@@ -328,7 +328,7 @@ EOF
       assert_equal(4, windows.size)
       assert_equal(true, windows[0].current?)
       assert_equal(false, windows[0].special?)
-      assert_equal("*scratch*", windows[0].buffer.name)
+      assert_equal("*untitled*", windows[0].buffer.name)
       assert_equal(0, windows[0].y)
       assert_equal(0, windows[0].x)
       assert_equal(23, windows[0].lines)
@@ -346,7 +346,7 @@ EOF
       assert_equal(0, windows[2].y)
       assert_equal(81, windows[2].x)
       assert_equal(23, windows[2].lines)
-      assert_equal(102, windows[2].columns) # -1 ???
+      assert_equal(-1, windows[2].columns) # this is only -1 cuz fake_cols is 80
       assert_equal(false, windows[3].current?)
       assert_equal(true, windows[3].special?)
       assert_equal(Buffer.minibuffer, windows[3].buffer)

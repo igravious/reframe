@@ -30,7 +30,9 @@ module ReFrame
     @@separator = EXTENT + 1 # makes sense
 
     @@has_colors = false
-    require 'rouge' # gets called before any mode
+		Kernel.silence_warnings do
+			require 'rouge' # gets called before any mode
+		end
     # @@opts = {:theme=>"thankful_eyes", :css_class=>"codehilite"} # TODO, don't need to do this, this is the default
     # @@theme = ::Rouge::Theme.find(@@opts[:theme]).new or raise "unknown theme #{@@opts[:theme]}"
     @@formatter = ::Rouge::Formatters::Buffer256.new()
@@ -104,9 +106,9 @@ module ReFrame
     def self.other_window
       i = @@list.index(@@current)
 			begin
-        i += 1
-			  window = @@list[i % @@list.size]
-      end while not window.active?
+				i += 1
+				window = @@list[i % @@list.size]
+			end while not window.active?
       self.current = window
     end
 
@@ -155,6 +157,10 @@ module ReFrame
       redraw
     end
 
+		def self.started?
+			@@started
+		end
+
     def self.start
       if @@started
         raise EditorError, 'Already started'
@@ -166,10 +172,13 @@ module ReFrame
         Curses.use_default_colors
         load_faces
       end
+      @@started = true
       begin
         # has a mode (context line) – h,w,y,x – leave room for echo area
         window = ReFrame::Window.new(Window.lines - 1, Window.separator - 1, 0, 0)
-        window.buffer = Buffer.new_buffer('*scratch*')
+				e = Element.new(frame_id: UNTITLED_FILE.id)
+				App.logger.info(e.inspect)
+				window.buffer = Buffer.new_buffer(e)
         @@list.push(window)
         Window.current = window
 
@@ -190,18 +199,17 @@ module ReFrame
         @@echo_area.buffer = Buffer.minibuffer
         @@list.push(@@echo_area)
 
-        @@started = true
         yield
       ensure
         @@list.each do |win|
           win.close
         end
         @@list.clear
-        curses_suspend
+        curses_shut_off
       end
     end
 
-    def self.curses_suspend
+    def self.curses_shut_off
       Curses.echo
       Curses.noraw
       Curses.nl
@@ -908,7 +916,10 @@ module ReFrame
       # return if @buffer.nil?
       @window.erase
       @window.setpos(0, 0)
-      @window.addstr('|' * Window.lines)
+      attrs = @@has_colors ? Face[:separator].attributes : Curses::A_REVERSE
+      @window.attrset(attrs)
+      @window.addstr('║' * Window.lines)
+      @window.attrset(0)
       @window.noutrefresh
     end
   end

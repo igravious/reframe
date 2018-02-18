@@ -1,0 +1,2 @@
+class Structured < Frame
+end

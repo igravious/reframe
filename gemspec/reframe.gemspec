@@ -12,7 +12,6 @@ else
 	File.expand_path('../../lib', __FILE__)
 end
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-# p $LOAD_PATH
 require 'reframe/version'
 
 Gem::Specification.new do |spec|
@@ -43,12 +42,14 @@ Gem::Specification.new do |spec|
 
 	# separate test and devel and test&devel ?
   spec.add_development_dependency "bundler", "~> 1.14"
-  spec.add_development_dependency "rake", "~> 12.0"
+  # spec.add_development_dependency "rake", "~> 12.0"
   spec.add_development_dependency "test-unit"
   spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "codecov"
-  spec.add_development_dependency "bundler-audit"
-  spec.add_development_dependency "ripper-tags"
+  # spec.add_development_dependency "codecov"
+  # spec.add_development_dependency "bundler-audit"
+  # spec.add_development_dependency "ripper-tags"
   spec.add_development_dependency "pry"
-	# spec.add_development_dependency "standalone-migrations"
+	spec.add_development_dependency "standalone_migrations"
+	spec.add_development_dependency "dotenv"
+	spec.add_development_dependency "bootsnap"
 end

@@ -80,7 +80,7 @@ module ReFrame
               @key_sequence.clear
               @prefix_arg = nil
               message("#{keys} is undefined")
-          end
+						end
             Window.redisplay
           rescue StandardError => e
             show_exception(e)

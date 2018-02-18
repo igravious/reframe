@@ -2,29 +2,13 @@
 
 # frozen_string_literal:true
 
-# `bundle exec exe/reframe' in vendored mode
-BUNDLE_MSG = 'try `bundle exec exe/reframe\' if/when in vendored mode'
-OW = -> { $!.to_s }
-def ow!() $!.to_s; end
-if ENV.key?('REFRAME_ENV')
-  # http://bundler.io/rubygems.html
-  begin
-    Bundler.require(ENV['REFRAME_ENV'])
-  rescue NameError
-    raise unless ow! =~ /uninitialized constant Bundler/
-    puts BUNDLE_MSG
-    exit
-  end
-  require_relative '../lib/reframe'
-else
-  begin
-    require 'reframe'
-  rescue LoadError
-    raise unless ow! =~ /reframe/
-    puts BUNDLE_MSG
-    exit
-  end
-end
+# what about when we're not using Bundler?
+require 'dotenv/load'
+require 'pry'
+require 'preamble'
+require 'active_support/core_ext/kernel/reporting'
+require 'active_support/core_ext/string/inquiry'
+require 'reframe' # works if bundlered or gemed
 
 # C-x C-c
 include ReFrame
@@ -45,14 +29,20 @@ def load_user_config
 end
 
 def debug(the_binding)
-  Window.curses_suspend
-  begin
-    the_binding.pry # gem install binding_of_caller
-    Window.restart
-  rescue
-    Window.restart
-    raise
-  end
+	if Window.started?
+		Window.curses_shut_off
+		begin
+			puts "hey"
+			the_binding.pry # gem install binding_of_caller
+			Window.restart
+		rescue
+			Window.restart
+			raise
+		end
+	else
+		puts "ho"
+		the_binding.pry
+	end
 end
 
 $VERBOSE = nil

@@ -8,7 +8,7 @@ module ReFrame
     tab_width: 8,
     indent_tabs_mode: false,
     case_fold_search: true,
-    buffer_dump_dir: File.expand_path('~/.reframe/buffer_dump'),
+		working_dir: File.expand_path('~/.reframe'),
     mark_ring_max: 16,
     global_mark_ring_max: 16,
     window_min_height: 4,
@@ -19,4 +19,7 @@ module ReFrame
     grep_command: 'grep -nH -e',
     fill_column: 70
   }
+	CONFIG[:buffer_dump_dir] = File.join(CONFIG[:working_dir], 'buffer_dump')
+	# CONFIG[:db_config_file] = File.join(CONFIG[:working_dir], 'db_config.yml')
+	CONFIG[:db_config_file] = File.join(Dir.getwd, 'db/config.yml')
 end

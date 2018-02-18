@@ -1,0 +1,2 @@
+class Concept < Structured
+end

@@ -1,8 +1,14 @@
 
+ENV['REFRAME_ENV']='test'
+# meh – maybe i ought not to use standalone-migrations
+system("rake db:drop RAILS_ENV=test")
+system("rake db:schema:load RAILS_ENV=test")
 require 'simplecov'
 require "test/unit"
 require "tmpdir"
 require "curses"
+require 'active_support'
+require 'active_support/core_ext/kernel/reporting'
 
 SimpleCov.profiles.define "reframe" do
   add_filter "/test/"
@@ -66,8 +72,9 @@ end
 require "reframe"
 
 module Curses
-  @fake_lines = 24
-  @fake_cols = 80
+	# simulate a decently sized console
+  @fake_lines = 24 # 41 # 24
+  @fake_cols = 80 # 161 # 80
   @fake_colors = 256
   @fake_default_colors = [-1, -1]
 end
